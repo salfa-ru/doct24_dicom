@@ -1,0 +1,9 @@
+Django<4
+django-cors-headers
+django-rest-swagger
+djangorestframework
+djangorestframework-simplejwt
+drf-yasg
+dynaconf
+Pillow
+pytest

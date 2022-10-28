@@ -1,0 +1,123 @@
+ENVIRON: false
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY: 'django-insecure-03rk)n!+rv=gd-eevp2$kecy2=pl_d)06(_2r%_xvx8$clq(im'
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG: true
+ALLOWED_HOSTS:
+  - '*'
+INSTALLED_APPS:
+  - django.contrib.admin
+  - django.contrib.auth
+  - django.contrib.contenttypes
+  - django.contrib.sessions
+  - django.contrib.messages
+  - django.contrib.staticfiles
+  - rest_framework
+  - rest_framework.authtoken
+  - rest_framework_simplejwt
+  - rest_framework_swagger
+  - drf_yasg
+  - corsheaders
+  - auth_app
+
+
+
+
+MIDDLEWARE:
+  - django.middleware.security.SecurityMiddleware
+  - django.contrib.sessions.middleware.SessionMiddleware
+  - corsheaders.middleware.CorsMiddleware
+  - django.middleware.common.CommonMiddleware
+  - django.middleware.csrf.CsrfViewMiddleware
+  - django.contrib.auth.middleware.AuthenticationMiddleware
+  - django.contrib.messages.middleware.MessageMiddleware
+  - django.middleware.clickjacking.XFrameOptionsMiddleware
+
+ROOT_URLCONF: 'project.urls'
+
+TEMPLATES:
+  -
+    BACKEND: 'django.template.backends.django.DjangoTemplates'
+    DIRS: []
+    APP_DIRS: true
+    OPTIONS:
+      context_processors:
+        - django.template.context_processors.debug
+        - django.template.context_processors.request
+        - django.contrib.auth.context_processors.auth
+        - django.contrib.messages.context_processors.messages
+
+WSGI_APPLICATION: project.wsgi.application
+
+DATABASES:
+    default:
+      ENGINE: django.db.backends.sqlite3
+      NAME: db.sqlite3
+
+## Параметры для PostgresSQL
+#DATABASES:
+#    default:
+#      ENGINE: django.db.backends.postgresql
+#      'NAME': 'имя базы данных',
+#      'USER': 'имя пользователя',
+#      'PASSWORD': 'пароль пользователя',
+#      'HOST': 'хост',
+#      'PORT': 'порт'
+
+AUTH_PASSWORD_VALIDATORS:
+  -
+    NAME: django.contrib.auth.password_validation.UserAttributeSimilarityValidator
+  -
+    NAME: django.contrib.auth.password_validation.MinimumLengthValidator
+  -
+    NAME: django.contrib.auth.password_validation.CommonPasswordValidator
+  -
+    NAME: django.contrib.auth.password_validation.NumericPasswordValidator
+
+LANGUAGE_CODE: ru
+TIME_ZONE: UTC
+USE_I18N: true
+USE_TZ: true
+
+STATIC_URL: 'static/'
+MEDIA_URL: 'media/'
+
+DEFAULT_AUTO_FIELD: django.db.models.BigAutoField
+
+AUTH_USER_MODEL: auth_app.User
+CORS_ORIGIN_ALLOW_ALL: true  # processing requests from all domains
+CORS_ALLOW_CREDENTIALS: true
+ASGI_APPLICATION: project.asgi.application
+
+SECURE_PROXY_SSL_HEADER:
+  - HTTP_X_FORWARDED_PROTO
+  - https
+
+REST_FRAMEWORK:
+  DEFAULT_PARSER_CLASSES:
+    - rest_framework.parsers.JSONParser
+  DEFAULT_FILTER_BACKENDS:
+#    - django_filters.rest_framework.DjangoFilterBackend
+  DEFAULT_AUTHENTICATION_CLASSES:
+    - rest_framework.authentication.TokenAuthentication
+    - rest_framework_simplejwt.authentication.JWTAuthentication
+  DEFAULT_PERMISSION_CLASSES:
+#    - rest_framework.permissions.IsAuthenticatedOrReadOnly
+    - rest_framework.permissions.AllowAny
+  DEFAULT_PAGINATION_CLASS: rest_framework.pagination.PageNumberPagination
+  DEFAULT_SCHEMA_CLASS: rest_framework.schemas.coreapi.AutoSchema
+  PAGE_SIZE:  5
+  MAX_PAGE_SIZE: 50
+
+EXPIRES_ACCESS_TOKEN_MINUTES: 60
+EXPIRES_REFRESH_TOKEN_MINUTES: 1800
+
+SWAGGER_SETTINGS:
+  USE_SESSION_AUTH: false
+  SHOW_REQUEST_HEADERS: true
+  SECURITY_DEFINITIONS:
+    Bearer:
+      type: apiKey
+      in: header
+      name: Authorization
+

@@ -1,0 +1,38 @@
+[
+	{
+		"first_name" : "Иван",
+		"last_name" : "Иванов",
+		"patronymic" : "Иванович",
+		"username" : "user1"
+	},
+	{
+		"first_name" : "Петр",
+		"last_name" : "Петрович",
+		"patronymic" : "Петров",
+		"username" : "user2"
+	},
+	{
+		"first_name" : "Сидр",
+		"last_name" : "Сидорович",
+		"patronymic" : "Сидоров",
+		"username" : "user3"
+	},
+	{
+		"first_name" : "Павел",
+		"last_name" : "Павлович",
+		"patronymic" : "Павлов",
+		"username" : "user4"
+	},
+	{
+		"first_name" : "Владимир",
+		"last_name" : "Владимирович",
+		"patronymic" : "Владимиров",
+		"username" : "user5"
+	},
+	{
+		"first_name" : "Денис",
+		"last_name" : "Денисович",
+		"patronymic" : "Денисов",
+		"username" : "user6"
+	}
+]
