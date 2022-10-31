@@ -18,10 +18,9 @@ INSTALLED_APPS:
   - rest_framework_swagger
   - drf_yasg
   - corsheaders
-  - auth_app
-
-
-
+  - auth_app # Приложение авторизации
+  - api_research_app # Приложение медицинских обследований
+  - api_label_app # модель меток врача
 
 MIDDLEWARE:
   - django.middleware.security.SecurityMiddleware
@@ -97,7 +96,7 @@ REST_FRAMEWORK:
   DEFAULT_PARSER_CLASSES:
     - rest_framework.parsers.JSONParser
   DEFAULT_FILTER_BACKENDS:
-#    - django_filters.rest_framework.DjangoFilterBackend
+    - django_filters.rest_framework.DjangoFilterBackend
   DEFAULT_AUTHENTICATION_CLASSES:
     - rest_framework.authentication.TokenAuthentication
     - rest_framework_simplejwt.authentication.JWTAuthentication
