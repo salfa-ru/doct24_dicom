@@ -28,6 +28,7 @@ MIDDLEWARE:
   - corsheaders.middleware.CorsMiddleware
   - django.middleware.common.CommonMiddleware
   - django.middleware.csrf.CsrfViewMiddleware
+  - corsheaders.middleware.CorsPostCsrfMiddleware
   - django.contrib.auth.middleware.AuthenticationMiddleware
   - django.contrib.messages.middleware.MessageMiddleware
   - django.middleware.clickjacking.XFrameOptionsMiddleware
@@ -110,6 +111,8 @@ REST_FRAMEWORK:
 
 EXPIRES_ACCESS_TOKEN_MINUTES: 60
 EXPIRES_REFRESH_TOKEN_MINUTES: 1800
+
+
 
 SWAGGER_SETTINGS:
   USE_SESSION_AUTH: false

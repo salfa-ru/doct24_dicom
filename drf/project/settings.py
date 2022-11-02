@@ -114,3 +114,13 @@ SIMPLE_JWT = {
 
 # Отображение пустого поля в админке
 EMPTY_FIELD = '-пусто-'
+
+
+CORS_ALLOWED_ORIGINS = ['http://localhost:8000']
+CORS_ALLOW_CREDENTIALS = True
+CORS_REPLACE_HTTPS_REFERER = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'localhost:8000',
+    'localhost'
+]
