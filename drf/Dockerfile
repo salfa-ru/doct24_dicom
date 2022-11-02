@@ -55,7 +55,7 @@ RUN pip install --no-cache /wheels/*
 # copy project
 COPY . $APP_HOME
 
-#RUN sed -i 's/staticfiles/static/g' /usr/local/lib/python3.9/site-packages/rest_framework_swagger/templates/rest_framework_swagger/index.html
+RUN sed -i 's/staticfiles/static/g' /usr/local/lib/python3.9/site-packages/rest_framework_swagger/templates/rest_framework_swagger/index.html
 
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
