@@ -23,6 +23,12 @@ import TagsTable from "./TagsTable";
 
 import "./DwvComponent.css";
 import dwv from "dwv";
+import style from './components/layoutDRW/layoutDRW.module.scss'
+import { Select } from "./components/ui/select/Select";
+import { DrawingKit } from "./components/drawingKit/DrawingKit";
+import { TopPanel } from "./components/topPanel/TopPanel";
+import { fetchFile } from "./http/sendFile";
+import { fetchSaveData } from "./http/data";
 
 // Image decoders (for web workers)
 dwv.image.decoderScripts = {
@@ -77,8 +83,9 @@ class DwvComponent extends React.Component {
       loadProgress: 0,
       dataLoaded: false,
       dwvApp: null,
-      modeDrawing: true,
+      modeDrawing: false,
       drawModeCanvas: false,
+      drawColor: 'red',
       metaData: [],
       showDicomTags: false,
       toolMenuAnchorEl: null,
@@ -88,11 +95,17 @@ class DwvComponent extends React.Component {
       hoverClassName: "hover",
       ctx: '',
       metaDataDraw: [],
+      metaPatology: {},
+      metaLocalization: {},
+      metaKolvo: {},
+      metaDolya: {},
+      metaSize: {},
+      patientData: this.props.patientData
     };
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, changeLayoutToList } = this.props;
     const {
       versions,
       tools,
@@ -114,9 +127,10 @@ class DwvComponent extends React.Component {
     ));
 
     return (
-      <div id="dwv">
+      <div className="wrapper">
+        <div className="container">
         <LinearProgress variant="determinate" value={loadProgress} />
-        <Stack direction="row" spacing={1} padding={1} justifyContent="center">
+        {/*<Stack direction="row" spacing={1} padding={1} justifyContent="center">
           <Button
             variant="contained"
             color="primary"
@@ -202,32 +216,94 @@ class DwvComponent extends React.Component {
             </AppBar>
             <TagsTable data={metaData} />
           </Dialog>
-        </Stack>
+        </Stack>*/}
 
-        <div id="layerGroup0" className="layerGroup">
-          <div id="dropBox"></div>
+       <TopPanel onSave={this.toggleButtonSave} changeLayoutToList={changeLayoutToList} />
+
+        {/*<div >
+          <div>Разметка Ивановой А.А.</div>
+          <div>Разметка Петровой В.С.</div>
+          <div>Разметка Соколовой И.Д.</div>
+        </div>*/}
+        
+        <div className={style.dataMetka__container}>
+        <div className={style.dataMetka}>
+              {/*<h2>Данные разметки:</h2>*/}
+
+              <div className={style.dataMetka__list}>
+                <Select 
+                  title="Патология:"
+                  list={[
+                    {id: 1, name: 'COVID-19'},
+                    {id: 2, name: 'Рак лёгкого'},
+                    {id: 3, name: 'Метастатиче ское поражение лёгких'},
+                  ]}
+                  item={this.state.metaPatology}
+                  update={(data) => this.setState({ metaPatology: data})}
+                />
+
+                <Select 
+                  title="Локализация:"
+                  list={[
+                    {id: 1, name: 'Верхняя доля правого лёгкого'},
+                    {id: 2, name: 'Средняя доля правого лёгкого'},
+                    {id: 3, name: 'Нижняя доля правого лёгкого'},
+                    {id: 4, name: 'Верхняя доля левого лёгкого'},
+                    {id: 5, name: 'Нижняя доля левого лёгкого'},
+                  ]}
+                  item={this.state.metaLocalization}
+                  update={(data) => this.setState({ metaLocalization: data})}
+                />
+
+                <Select 
+                  title="Доля:"
+                />
+
+                <Select 
+                  title="Количество:"
+                  list={[
+                    {id: 1, name: 'Единичное (1-3)'},
+                    {id: 2, name: 'Немногочисленные (4-10)'},
+                    {id: 3, name: 'Многочисленные (>10)'},
+                  ]}
+                  item={this.state.metaKolvo}
+                  update={(data) => this.setState({ metaKolvo: data})}
+                />
+
+                <Select 
+                  title="Размеры:"
+                  list={[
+                    {id: 1, name: '5 мм'},
+                    {id: 2, name: '5-10 мм'},
+                    {id: 3, name: '10-20 мм'},
+                    {id: 4, name: '>20 мм'},
+                  ]}
+                  item={this.state.metaSize}
+                  update={(data) => this.setState({ metaSize: data})}
+                />
+
+                <Select 
+                  title="Подлинность:"
+                />
+              </div>
+            </div>
         </div>
 
-        <div>
-          <p className="legend">
-            <Typography variant="caption">
-              Powered by{" "}
-              <Link
-                href="https://github.com/ivmartel/dwv"
-                title="dwv on github"
-              >
-                dwv
-              </Link>{" "}
-              {versions.dwv} and{" "}
-              <Link
-                href="https://github.com/facebook/react"
-                title="react on github"
-              >
-                React
-              </Link>{" "}
-              {versions.react}
-            </Typography>
-          </p>
+        <button hidden className="save"  onClick={() => this.onSave()}>save</button>
+       
+       <div className="workspace">
+        <div className="toolbar">
+          <DrawingKit 
+            onClick={(func) => this.onClickDrawingKit(func)}
+          />
+        </div>
+        <div id="dwv">
+            <div id="layerGroup0" className="layerGroup">
+              <div id="dropBox"></div>
+            </div>
+          </div>
+       </div>
+      
         </div>
       </div>
     );
@@ -324,6 +400,69 @@ class DwvComponent extends React.Component {
 
     // possible load from location
     dwv.utils.loadFromUri(window.location.href, app);
+
+    console.log('didMount');
+
+    if (this.state.patientData?.id) {
+      console.log('yes');
+
+      this.onDrop({
+        patient: true,
+        file: this.state.patientData
+      })
+    } else {
+      console.log('no');
+    }
+  }
+
+  onClickDrawingKit(func) {
+    switch(func) {
+      case 'pencil':
+        this.handleModeDrawing('pencil');
+        break;
+      case 'contrast':
+        this.handleModeDrawing('WindowLevel');
+        break;
+      case 'zoom':
+        this.handleModeDrawing('ZoomAndPan')
+        break;
+      case 'Scroll':
+        this.handleModeDrawing('Scroll')
+        break;
+      case 'colorFill':
+        this.onChangeColorFill();
+        break;
+      default: break;
+    }
+  }
+
+  onChangeColorFill() {
+    console.log('colorfill');
+  }
+
+  toggleButtonSave() {
+    let button = document.querySelector('.save');
+    button.click();
+  }
+
+  onSave = () => {
+    let data = this.createData();
+
+    console.log('data', data);
+
+    fetchSaveData(data);
+  }
+
+  createData = () => {
+    let data = {
+      metaPatology: this.state.metaPatology,
+      metaLocalization: this.state.metaLocalization,
+      metaKolvo: this.state.metaKolvo,
+      metaDolya: this.state.metaDolya,
+      metaSize: this.state.metaSize,
+    }
+
+    return data;
   }
 
   /**
@@ -340,22 +479,35 @@ class DwvComponent extends React.Component {
     }
   };
 
-  handleModeDrawing = () => {
-    this.setState({ modeDrawing: !this.state.modeDrawing })
-    if (this.state.modeDrawing === true) {
-      this.onChangeTool('Draw')
-      this.modeCanvasOn();
-    } else {
-      this.onChangeTool('Scroll')
-      this.modeCanvasOff();
+  startDraw() {
+    this.setState({ modeDrawing: true })
+    this.onChangeTool('Draw')
+    this.modeCanvasOn();
+  }
+
+  stopDraw(func) {
+    this.setState({ modeDrawing: false })
+    this.onChangeTool(func)
+    this.modeCanvasOff();
+  }
+
+  handleModeDrawing = (func) => {
+    if (func === 'pencil' && this.state.modeDrawing === true) {
+      return;
+    } else if (func === 'pencil' && this.state.modeDrawing === false) {
+      this.startDraw();
+    } else if (func !== 'pencil' && this.state.modeDrawing === true) {
+      this.stopDraw(func);
+    } else if (func !== 'pencil' && this.state.modeDrawing === false) {
+      this.onChangeTool(func)
     }
+    
   }
 
   fillThis = (x, y, sizeX, sizeY) => {
     const canvas = this.getCanvas();
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = 'red';
-    y = y - 50;
     ctx.fillRect(x, y, sizeX, sizeY);
   }
 
@@ -375,13 +527,15 @@ class DwvComponent extends React.Component {
         }
       }
     ] })
-
-    console.log('this.state.metaDataDraw', this.state.metaDataDraw);
   }
 
   getCoords = (e) => {
-    let x = e.pageX - e.target.offsetLeft,
-        y = e.pageY - e.target.offsetTop;
+    //let x = e.clientX - e.target.offsetLeft,
+    //    y = e.clientY - e.target.offsetTop;
+    let elem = document.querySelector('.canvasDrawElement');
+    let ClientRect = elem.getBoundingClientRect();
+    let x = e.clientX - ClientRect.left;
+    let y = e.clientY - ClientRect.top;
 
     return {x, y}
   }
@@ -390,8 +544,7 @@ class DwvComponent extends React.Component {
     const coords = this.getCoords(e);
     const {x, y} = coords;
     let sizeX = 4,
-    sizeY = 4;
-
+        sizeY = 4;
     this.fillThis(x, y, sizeX, sizeY)
     this.logsAfterFill({x, y, sizeX, sizeY})
   }
@@ -440,7 +593,6 @@ class DwvComponent extends React.Component {
    * @param {string} shape The new shape name.
    */
   onChangeShape = (shape) => {
-    console.log("onChangeShape");
     if (this.state.dwvApp) {
       this.state.dwvApp.setDrawShape(shape);
     }
@@ -453,7 +605,6 @@ class DwvComponent extends React.Component {
   };
 
   handleTagsDialogOpen = () => {
-    console.log("handleTagsDialogOpen");
     this.setState({ showDicomTags: true });
   };
 
@@ -488,7 +639,6 @@ class DwvComponent extends React.Component {
    * @param {DragEvent} event The event to handle.
    */
   defaultHandleDragEvent = (event) => {
-    console.log("dradEvent", event);
     // prevent default handling
     event.stopPropagation();
     event.preventDefault();
@@ -512,7 +662,6 @@ class DwvComponent extends React.Component {
    * @param {DragEvent} event The event to handle.
    */
   onBoxDragLeave = (event) => {
-    console.log("onBoxDragLeave");
     this.defaultHandleDragEvent(event);
     // update box class
     const box = document.getElementById(this.state.dropboxDivId);
@@ -528,11 +677,42 @@ class DwvComponent extends React.Component {
    * Handle a drop event.
    * @param {DragEvent} event The event to handle.
    */
-  onDrop = (event) => {
-    this.defaultHandleDragEvent(event);
+  onDrop = async (event) => {
+    //console.log('event.dataTransfer.files', event.dataTransfer.files);
+   
     // load files
-    this.state.dwvApp.loadFiles(event.dataTransfer.files);
+
+    if (event?.patient) {
+      let formData = new FormData();
+      formData.append('file', event.file)
+
+      console.log('formData', formData.get('file'));
+      this.state.dwvApp.loadFiles(formData)
+    } else {
+      this.defaultHandleDragEvent(event);
+      this.state.dwvApp.loadFiles(event.dataTransfer.files);
+
+      //console.log('loadFIle', event.dataTransfer.files);
+      let file = await this.createFormData(event.dataTransfer.files);
+      this.sendFile(file);
+    }
+   
   };
+
+  createFormData = async (file) => {
+    let formdata = new FormData();
+    formdata.append("file", file[0]);
+
+    console.log('file', formdata.get('file'))
+
+    return formdata;
+  }
+
+  sendFile = async (file) => {
+    let res = await fetchFile(file);
+
+    console.log('res', res);
+  }
 
   initCanvasDraw = async (layer) => {
     const oldCanvas = await document.querySelector('.canvasDrawElement');
@@ -545,13 +725,13 @@ class DwvComponent extends React.Component {
 
     const layerDiv = await document.querySelector(`#${layer}`);
     const someCanvas = await document.querySelector('#dwv');
-    const someCanvasWidth = someCanvas.offsetWidth;
-    let width = 975;
-    let heigth = 975;
+    //const someCanvasWidth = someCanvas.offsetWidth;
+    let width = 900;
+    let heigth = 900;
 
-    if (someCanvasWidth < 975) {
-      width = someCanvasWidth;
-    }
+    //if (someCanvasWidth < 975) {
+    //  width = someCanvasWidth;
+    //}
 
     const div = document.createElement("div");
     div.classList.add('layer2');

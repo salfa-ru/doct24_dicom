@@ -1,6 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   text-align: center;
   height: 100%;
+  /*display: flex;
+  align-items: center;
+  justify-content: center;*/
 }
 
 .hidden {
@@ -9,8 +17,61 @@
 
 .layer2 {
   border: 1px solid green;
-  width: 100%;
+  height: 900px;
+  width: 900px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 40px;
+  padding-top: 40px;
+}
+
+.container {
+  display: flex;
+  align-items: left;
+  max-width: 1280px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  max-width: 1280px;
+  width: 100%;
+  flex-direction: column;
+}
+
+#dwv {
+  /*width: 1000px;
+  height: 800px;*/
+}
+
+.workspace {
+  display: flex;
+  width: 100%;
+}
+
+.toolbar {
+  width: 100px;
+}
+
+.flex {
+  display: flex;
+}
+
+.justifyContent {
+  justify-content: space-between;
+}
+
+h1 {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 44px;
+  color: #313131;
+  margin: 20px 0;
 }
