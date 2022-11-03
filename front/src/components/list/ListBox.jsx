@@ -25,15 +25,17 @@ export const ListBox = ({
     <div className="listBox">
        <h1>Исследования</h1>
 
-      {!!list.length ? (
-        list.map(item => (
-          <Card 
-            item={item} 
-            onSelectPatient={onSelectPatient}
-            key={item.id}
-          />
-        ))
-      ) : ('нет данных')}
+ <div className='flex gap20'>
+        {!!list.length ? (
+          list.map(item => (
+            <Card 
+              item={item} 
+              onSelectPatient={onSelectPatient}
+              key={item.id}
+            />
+          ))
+        ) : ('нет данных')}
+      </div>
     </div>
   )
 }
