@@ -134,3 +134,6 @@ mediafiles/
 .vscode/
 uploads/
 
+media/
+
+drf/.idea/

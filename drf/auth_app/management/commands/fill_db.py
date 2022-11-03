@@ -11,6 +11,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         _ = User.objects.create_superuser(
-            username='admin', email='django@geekshop.local', password='admin'
+            username='admin', email='admin@localhost', password='admin'
         )
         fill_user()

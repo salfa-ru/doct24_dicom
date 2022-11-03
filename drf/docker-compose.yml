@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  web:
+    restart: always
+    build: ./
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py fill_db && python manage.py collectstatic --noinput && gunicorn project.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+#    expose:
+#      - 8000
+    env_file:
+      - ./.env
+#    environment:
+#      API_URL: openapi.yml
+    depends_on:
+      - db
+    links:
+      - db:db
+    networks:
+      - djangonetwork
+  db:
+    restart: always
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
+    networks:
+      - djangonetwork
+  nginx:
+    restart: always
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+    ports:
+      - 8000:8000
+    depends_on:
+      - web
+#   command: [nginx-debug, '-g', 'daemon off;']
+    networks:
+      - djangonetwork
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  djangonetwork:
+    driver: bridge
