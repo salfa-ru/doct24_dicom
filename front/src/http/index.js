@@ -20,8 +20,8 @@ const authInterceptor = async (config) => {
 const fileInterceptor = async (config) => {
 
   config.headers = {
-    'enctype': 'multipart/form-data',
     'Authorization': `Bearer ${token}`,
+    "Content-Type": "multipart/form-data",
   }
 
   return config;

@@ -29,6 +29,7 @@ import { DrawingKit } from "./components/drawingKit/DrawingKit";
 import { TopPanel } from "./components/topPanel/TopPanel";
 import { fetchFile } from "./http/sendFile";
 import { fetchSaveData } from "./http/data";
+import { $authHost } from "./http";
 
 // Image decoders (for web workers)
 dwv.image.decoderScripts = {
@@ -100,7 +101,8 @@ class DwvComponent extends React.Component {
       metaKolvo: {},
       metaDolya: {},
       metaSize: {},
-      patientData: this.props.patientData
+      patientData: this.props.patientData,
+      incomingFileFromBack: false,
     };
   }
 
@@ -288,10 +290,13 @@ class DwvComponent extends React.Component {
               </div>
             </div>
         </div>
-
-        <button hidden className="save"  onClick={() => this.onSave()}>save</button>
+        
+        <a hidden href="#" className="downloadDicomLink hiddenModule">скачать</a>
+        <button hidden className="save hiddenModule"  onClick={() => this.onSave()}>save</button>
+        <input type="file" name="file" className="downloadFile hiddenModule"/>
        
        <div className="workspace">
+       
         <div className="toolbar">
           <DrawingKit 
             onClick={(func) => this.onClickDrawingKit(func)}
@@ -401,17 +406,14 @@ class DwvComponent extends React.Component {
     // possible load from location
     dwv.utils.loadFromUri(window.location.href, app);
 
-    console.log('didMount');
-
     if (this.state.patientData?.id) {
-      console.log('yes');
 
       this.onDrop({
         patient: true,
         file: this.state.patientData
       })
-    } else {
-      console.log('no');
+
+      this.downloadDicom(this.state.patientData.media_file)
     }
   }
 
@@ -447,8 +449,6 @@ class DwvComponent extends React.Component {
 
   onSave = () => {
     let data = this.createData();
-
-    console.log('data', data);
 
     fetchSaveData(data);
   }
@@ -677,33 +677,99 @@ class DwvComponent extends React.Component {
    * Handle a drop event.
    * @param {DragEvent} event The event to handle.
    */
+  fetchImage = async (url) => {
+    const data = await fetch(url, {
+      mode: 'no-cors'
+    });
+
+    const data2 = await $authHost.request({
+      method: "get",
+      mode: 'no-cors',
+      headers: {
+        //"Access-Control-Allow-Origin" : '*',
+        "Content-Type": "multipart/form-data",
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3NTQ2NTU4LCJpYXQiOjE2Njc0NjAxNTgsImp0aSI6IjcxY2U2NDkwMTE2MjQ4NDhhOTE3NTE4MTc4M2FhZjIxIiwidXNlcl9pZCI6ImQyOWQwNDdjLWM1OWYtNGJiNi05ZGU1LWRkMjZjZjJjMDM1MCJ9.i-imlbd3oRMObW8d_thdJCJYsUoQ6tKRIZU4stvWkAg`,
+        'accept': 'application/json'
+      },
+      url: "http://92.255.110.75:8000/media/0002.DCM",
+      onUploadProgress: (res) => {
+        console.log('res', res);
+      }
+    });
+
+    console.log('data2', data2);
+
+    const buffer = await data.arrayBuffer();
+    const blob = new Blob([buffer], { type: "application/dicom"});
+
+    return blob;
+  }
+
+  fetchDataTranfer = async (info) => {
+    let dt  = new DataTransfer();
+    dt.items.add(new File([info], 'file', {type: 'text/plain'}));
+    let file_list = dt.files;
+
+    return file_list;
+  }
+    
+  downloadDicom = (link) => {
+    let button = document.querySelector('.downloadDicomLink');
+    button.href = 'http://92.255.110.75:8000/media/0002.DCM';
+
+    button.click();
+  }
+
   onDrop = async (event) => {
+    //this.downloadDicom();
     //console.log('event.dataTransfer.files', event.dataTransfer.files);
    
     // load files
+    let input = document.querySelector('input[type="file"]');
 
-    if (event?.patient) {
-      let formData = new FormData();
-      formData.append('file', event.file)
+    if (event?.patient && !this.state.incomingFileFromBack) {
+      //console.log('пациент есть incomingFileFromBack нет');
+      //let formData = new FormData();
+      //formData.append('file', event.file)
 
-      console.log('formData', formData.get('file'));
-      this.state.dwvApp.loadFiles(formData)
-    } else {
+
+      let input = document.querySelector('.downloadFile')
+      const blob = await this.fetchImage('http://92.255.110.75:8000/media/0002.DCM')
+      const dT = new ClipboardEvent('').clipboardData || new DataTransfer()
+      dT.items.add(new File([blob], '0002 (1).DCM'))
+      input.files = dT.files
+
+      console.log('input', dT.files);
+      
+      //this.setState({incomingFileFromBack: true});
+      //this.startCreateDicom(input.files);
+    }
+    if (!event?.patient && !this.state.incomingFileFromBack) {
       this.defaultHandleDragEvent(event);
       this.state.dwvApp.loadFiles(event.dataTransfer.files);
 
       //console.log('loadFIle', event.dataTransfer.files);
       let file = await this.createFormData(event.dataTransfer.files);
-      this.sendFile(file);
+      this.sendFile(event.dataTransfer.files);
+    }
+
+    if (this.state.incomingFileFromBack) {
+      //console.log('incomingFileFromBack');
+      this.state.dwvApp.loadFiles(input.dataTransfer.files)
     }
    
   };
 
+  startCreateDicom(event) {
+    //console.log('incomingFileFromBack', this.state.incomingFileFromBack);
+    //console.log('create dicom');
+    //console.log('event', event);
+    this.state.dwvApp.loadFiles(event)
+  }
+
   createFormData = async (file) => {
     let formdata = new FormData();
     formdata.append("file", file[0]);
-
-    console.log('file', formdata.get('file'))
 
     return formdata;
   }
@@ -711,7 +777,7 @@ class DwvComponent extends React.Component {
   sendFile = async (file) => {
     let res = await fetchFile(file);
 
-    console.log('res', res);
+    //console.log('res', res);
   }
 
   initCanvasDraw = async (layer) => {
@@ -789,7 +855,7 @@ class DwvComponent extends React.Component {
       // check content
       if (box.innerHTML === "") {
         const p = document.createElement("p");
-        p.appendChild(document.createTextNode("Drag and drop data here"));
+        p.appendChild(document.createTextNode("Перетащите сюда скаченный Dicom файлик"));
         box.appendChild(p);
       }
       // show box
