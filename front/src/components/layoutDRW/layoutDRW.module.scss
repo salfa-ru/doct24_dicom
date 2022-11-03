@@ -1,0 +1,32 @@
+.wrapperService {
+  display: flex;
+  border: 1px solid red;
+}
+
+.dataMetka {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+  margin-top: 40px;
+  &__container {
+    width: 100%;
+  }
+  &__list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid #DADADA;
+    border-radius: 10px;
+    //flex-wrap: wrap;
+    //& div {
+    //  border-left: 1px solid #DADADA;
+    //}
+    //& div:nth-child(1) {
+      
+    //}
+    & div {
+      flex: 1;
+    }
+  }
+}

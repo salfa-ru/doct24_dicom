@@ -1,0 +1,15 @@
+.drawingKit {
+  &__wrapper {
+    background-color: #F9F9F9;
+    border-radius: 10px;
+  }
+
+  & ul li {
+    border-bottom: 1px solid #DADADA;
+    padding: 14px 9px;
+    list-style-type: none;
+  }
+  & ul li:last-child {
+    border-bottom: none;
+  }
+}

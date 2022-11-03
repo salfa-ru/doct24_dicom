@@ -1,0 +1,14 @@
+.topPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  &__logoBlock {
+    display: flex;
+    gap: 32px;
+  }
+  &__btns {
+    display: flex;
+    gap: 10px;
+  }
+}
