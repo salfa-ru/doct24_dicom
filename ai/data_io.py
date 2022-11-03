@@ -1,6 +1,7 @@
 import os
 import re
 import lungmask
+import numpy as np
 import nibabel as nib
 import SimpleITK as sitk
 from zipfile import ZipFile
@@ -79,6 +80,15 @@ class LungsDataLoader:
             return
         output_file = self.path + 'dicom2nifit/imaging.nii.gz'
         dicom_series_to_nifti(dicom_directory, output_file, reorient_nifti=True)
+
+    @staticmethod
+    def save_to_dicom(array, path):
+        if not os.path.exists(path):
+            os.mkdir(path)
+        array = array.astype(np.int16)
+        for n in range(array.shape[0]):
+            img = sitk.GetImageFromArray(array[n])
+            sitk.WriteImage(img, f'{path}/{n + 1:04}.dcm')
 
 
 if __name__ == "__main__":
