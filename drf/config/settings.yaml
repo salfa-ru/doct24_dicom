@@ -21,6 +21,7 @@ INSTALLED_APPS:
   - auth_app # Приложение авторизации
   - api_research_app # Приложение медицинских обследований
   - api_label_app # модель меток врача
+  - api_processing_app # запуск
 
 MIDDLEWARE:
   - django.middleware.security.SecurityMiddleware
