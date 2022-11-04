@@ -33,7 +33,7 @@ class LabelViewSet(
     permission_classes = (IsAuthenticated,)
 
     pagination_class = ProjectPagination
-    queryset = Research.objects.all()
+    queryset = Label.objects.all()
 
     filter_backends = [filters.SearchFilter]
     search_fields = ['research_id']
