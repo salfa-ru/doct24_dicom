@@ -1,0 +1,6 @@
+numpy==1.22.4
+lungmask==0.2.11
+nibabel==4.0.2
+SimpleITK==2.0.2
+miscnn==1.4.0
+dicom2nifti==2.4.5
