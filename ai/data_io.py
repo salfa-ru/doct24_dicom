@@ -1,5 +1,4 @@
-import os
-import re
+import os, json, re
 import lungmask
 import numpy as np
 import nibabel as nib
@@ -69,8 +68,31 @@ class LungsDataLoader:
         nib.save(mask, path)
 
     @staticmethod
+    def mask_to_json(mask, keys):
+        mask_json = {}
+        for n in range(mask.shape[0]):
+            zone_dict = {key: [] for key in keys}
+            mask_n = mask[n].copy()
+            for i in range(mask_n.shape[0]):
+                for j in range(mask_n.shape[1]):
+                    if mask_n[i, j] in zone_dict.keys():
+                        zone_dict[mask_n[i, j]].append((i, j))
+            mask_json[n] = zone_dict
+        return mask_json
+
+    @staticmethod
+    def save_mask_json(mask, path):
+        with open(path, 'w') as f:
+            json.dump(mask, f)
+
+    @staticmethod
     def load_mask(path):
         return nib.load(path).dataobj
+
+    @staticmethod
+    def load_mask_json(path):
+        with open(path, 'r') as f:
+            return json.load(f)
 
     def dicom_to_nifit(self):
         dicom_directory = self.path + 'dicom/'
