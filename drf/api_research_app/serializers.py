@@ -11,7 +11,7 @@ class ResearchModelSerializer(ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     media_file = serializers.FileField(required=True)
-    patient_code = serializers.CharField(required=True)
+    patient_code = serializers.CharField(required=False)
     owner = UserSerializer(read_only=True)
     created_at = TimestampField(read_only=True)
     updated_at = TimestampField(read_only=True)

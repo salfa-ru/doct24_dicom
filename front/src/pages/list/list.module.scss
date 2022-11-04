@@ -1,0 +1,11 @@
+.list {
+  width: 100%;
+  text-align: left;
+  &__topPanel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+  }
+}
