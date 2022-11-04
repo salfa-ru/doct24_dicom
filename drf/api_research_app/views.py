@@ -45,14 +45,14 @@ class ResearchViewSet(
 
     def create(self, request, *args, **kwargs):
 
-        serializer = self.get_serializer(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-        except Exception as err:
-            return Response(status=HTTPStatus.BAD_REQUEST, data=str(err))
 
-        return super(ResearchViewSet, self).create(request, *args, **kwargs)
+        # serializer = self.get_serializer(data=request.data)
+        # try:
+        #     serializer.is_valid(raise_exception=True)
+        #     self.perform_create(serializer)
+        # except Exception as err:
+        return Response(status=HTTPStatus.OK, data=123)
+        # return super(ResearchViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
