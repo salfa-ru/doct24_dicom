@@ -13,8 +13,6 @@ class LabelModelSerializer(ModelSerializer):
     """ Сериализатор медицинского исследования """
 
     id = serializers.IntegerField(read_only=True)
-    research_id = serializers.IntegerField(required=True, source='research')
-    owner = UserSerializer(read_only=True)
     labels = serializers.JSONField(required=True)
     created_at = TimestampField(read_only=True)
     updated_at = TimestampField(read_only=True)
@@ -24,14 +22,13 @@ class LabelModelSerializer(ModelSerializer):
         fields = (
             'id',
             'research_id',
-            'owner',
             'labels',
             'created_at',
             'updated_at'
         )
 
     def validate(self, attrs):
-        if not Research.objects.filter(pk=attrs['research']):
+        if not Research.objects.filter(pk=self.initial_data['research_id']):
             raise serializers.ValidationError(
                 "не найдено медицинское обследование"
             )
