@@ -1,3 +1,6 @@
+from http import HTTPStatus
+
+from rest_framework.response import Response
 from rest_framework import mixins, viewsets, filters
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
@@ -39,6 +42,17 @@ class ResearchViewSet(
         return get_object_or_404(Research,
                                 pk=self.kwargs['pk'],
                                 owner=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+        except Exception as err:
+            return Response(status=HTTPStatus.BAD_REQUEST, data=str(err))
+
+        return super(ResearchViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
