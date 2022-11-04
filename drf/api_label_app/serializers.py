@@ -13,6 +13,7 @@ class LabelModelSerializer(ModelSerializer):
     """ Сериализатор медицинского исследования """
 
     id = serializers.IntegerField(read_only=True)
+    research_id = serializers.IntegerField(required=True)
     labels = serializers.JSONField(required=True)
     created_at = TimestampField(read_only=True)
     updated_at = TimestampField(read_only=True)
