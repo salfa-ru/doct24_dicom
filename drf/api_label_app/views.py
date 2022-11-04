@@ -28,7 +28,6 @@ class LabelViewSet(
     class Meta:
         ordering = ['-created_at']
 
-    # parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     serializer_class = LabelModelSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -62,6 +61,6 @@ class LabelViewSet(
                         )
 
     def perform_create(self, serializer):
-        research_id = serializer.validated_data['research']
+        research_id = serializer.initial_data['research_id']
         research = get_object_or_404(Research, pk=research_id)
         return serializer.save(owner=self.request.user, research=research)
