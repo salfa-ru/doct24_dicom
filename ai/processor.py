@@ -11,10 +11,19 @@ class LungsAnalyzer(LungsDataLoader):
         super().__init__(id, segmentation)
 
     def get_mask(self, model='covid'):
-        path = self.masks_folder + model + '.nii.gz'
-        if os.path.exists(path):
-            mask = self.load_mask(path)
-            return mask
+        path = self.masks_folder + model
+        if os.path.exists(path + '.json'):
+            mask_json = self.load_mask_json(path + '.json')
+            return mask_json
+        elif os.path.exists(path + '.nii.gz'):
+            mask = self.load_mask(path + '.nii.gz')
+        else:
+            mask = self.perform_masking(model)
+        mask_json = self.mask_to_json(mask, keys=[3])
+        self.save_mask_json(mask_json, path + '.json')
+        return mask_json
+
+    def perform_masking(self, model='covid'):
         if model == 'covid':
             input_folder = self.data_folder
             index = self.id
@@ -25,9 +34,10 @@ class LungsAnalyzer(LungsDataLoader):
             model = covid_model(input_folder, self.masks_folder)
             mask = model.predict([index], return_output=True)[0]
             mask = mask.T[:, ::-1, :]
-            if not os.path.exists(self.masks_folder):
-                os.mkdir(self.masks_folder)
-            self.save_mask(mask, path)
+        if not os.path.exists(self.masks_folder):
+            os.mkdir(self.masks_folder)
+        path = self.masks_folder + model + '.nii.gz'
+        self.save_mask(mask, path)
         return mask
 
     def get_piece_name(self, **kwargs):
