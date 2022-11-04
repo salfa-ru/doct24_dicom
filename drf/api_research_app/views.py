@@ -43,16 +43,16 @@ class ResearchViewSet(
                                 pk=self.kwargs['pk'],
                                 owner=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-
-
-        # serializer = self.get_serializer(data=request.data)
-        # try:
-        #     serializer.is_valid(raise_exception=True)
-        #     self.perform_create(serializer)
-        # except Exception as err:
-        return Response(status=HTTPStatus.OK, data=123)
-        # return super(ResearchViewSet, self).create(request, *args, **kwargs)
+    # def create(self, request, *args, **kwargs):
+    #
+    #
+    #     # serializer = self.get_serializer(data=request.data)
+    #     # try:
+    #     #     serializer.is_valid(raise_exception=True)
+    #     #     self.perform_create(serializer)
+    #     # except Exception as err:
+    #     return Response(status=HTTPStatus.OK, data=123)
+    #     # return super(ResearchViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
