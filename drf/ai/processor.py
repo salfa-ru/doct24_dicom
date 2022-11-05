@@ -10,7 +10,8 @@ class LungsAnalyzer(LungsDataLoader):
     def __init__(self, id, segmentation=True):
         super().__init__(id, segmentation)
 
-    def get_mask(self, model='covid'):
+    def get_mask(self, **kwargs):
+        model = kwargs['model']
         path = self.masks_folder + model
         if os.path.exists(path + '.json'):
             mask_json = self.load_mask_json(path + '.json')
@@ -96,12 +97,15 @@ class LungsAnalyzer(LungsDataLoader):
     def get_generation(self, **kwargs):
         path = self.path + 'generation/'
         if os.path.exists(path):
-            path = path + '_'.join([str(param) for param in kwargs.values()])
+            gen_keys = ['patology', 'segments', 'quantity', 'size']
+            gen_params = [str(kwargs[key]) for key in gen_keys if kwargs[key]]
+            gen_name = '_'.join(gen_params)
+            path = path + gen_name
             if os.path.exists(path):
                 return path
-        return self.perform_generation(**kwargs)
+        return self.perform_generation(gen_name, **kwargs)
 
-    def perform_generation(self, **kwargs):
+    def perform_generation(self, gen_name, **kwargs):
         piece = self.load_piece(**kwargs)
         if not self.segmentation:
             self.segmentation = self.load_segmentation()
@@ -115,7 +119,7 @@ class LungsAnalyzer(LungsDataLoader):
         path = self.path + 'generation/'
         if not os.path.exists(path):
             os.mkdir(path)
-        path = path + '_'.join([str(param) for param in kwargs.values()])
+        path = path + gen_name
         self.save_to_dicom(images, path)
         return path
 

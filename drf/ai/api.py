@@ -1,5 +1,6 @@
 import os, shutil
 from processor import LungsAnalyzer
+from patologies import Piece
 
 
 def api_commander(**kwargs):
@@ -14,10 +15,20 @@ def api_commander(**kwargs):
             # shutil.copy() копируем файлы
             analyzer = LungsAnalyzer(kwargs['id'], segmentation=True)
         if kwargs.get('mode') == 'mask':
-            return analyzer.get_mask(kwargs['model'])
+            return True, analyzer.get_mask(**kwargs)
         elif kwargs.get('mode') == 'gen':
             path = analyzer.get_generation(**kwargs)
-            #здесь будет метод для отправки сгенерированного файла в базу
-            return path
+            # здесь будет метод для отправки сгенерированного файла в базу
+            return True, path
     except Exception as err:
-        return {'error': str(err)}
+        return False, {'error': str(err)}
+
+
+if __name__ == "__main__":
+    gen_request = {"id": "0001", "mode": "gen", "patology": "covid", "segments": [1], "quantity": 1, 'size': 1}
+    mask_request = {"id": "0001", "mode": "mask", "model": "covid"}
+
+    response = api_commander(**mask_request)
+    print(response)
+    response = api_commander(**gen_request)
+    print(response)
