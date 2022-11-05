@@ -31,8 +31,8 @@ class LungsAnalyzer(LungsDataLoader):
                 self.dicom_to_nifit()
                 input_folder = input_folder + index + '/'
                 index = 'dicom2nifit'
-            model = covid_model(input_folder, self.masks_folder)
-            mask = model.predict([index], return_output=True)[0]
+            nn_model = covid_model(input_folder, self.masks_folder)
+            mask = nn_model.predict([index], return_output=True)[0]
             mask = mask.T[:, ::-1, :]
         if not os.path.exists(self.masks_folder):
             os.mkdir(self.masks_folder)
@@ -68,7 +68,7 @@ class LungsAnalyzer(LungsDataLoader):
         min_hight = False
         max_hight = False
         for i in range(self.segmentation.shape[0]):
-            mask = ~np.isin(self.segmentation[i], segments)
+            mask = np.isin(self.segmentation[i], segments)
             if np.count_nonzero(mask) > 10000:
                 if not min_hight:
                     min_hight = i
@@ -77,19 +77,20 @@ class LungsAnalyzer(LungsDataLoader):
 
     def get_base_point(self, piece, segments=[1, 2, 3, 4, 5]):
         min_hight, max_hight = self.get_hight_range(segments)
-        start_level = (max_hight - piece.shape[0]) // 2
+        start_level = (max_hight - piece.shape[0] + min_hight) // 2
         start_level = start_level * (start_level > 0)
         idx = min_hight + 3
-        mask = ~np.isin(self.segmentation[idx], segments)
-        seg_mask = np.ma.masked_where(mask, self.segmentation[idx])
+        mask_inv = ~np.isin(self.segmentation[idx], segments)
+        seg_mask = np.ma.masked_where(mask_inv, self.segmentation[idx])
         seg_cont = self.averaging(~seg_mask.mask)
         seg_cont = np.vectorize(lambda x: 1 if 0.7 < x < 0.95 else 0)(seg_cont)
-        while True:
-            i = np.random.randint(seg_cont.shape[0])
-            j = np.random.randint(seg_cont.shape[1])
-            base_point = (i, j)
-            if seg_cont[i, j] and (base_point[0] - piece.point[0]) > 0 \
-                    and (base_point[1] - piece.point[1]) > 0 and j < seg_cont.shape[1] * 0.4:
+        seg_cont_points = [(i, j) for i, j in zip(*np.nonzero(seg_cont))]
+        for _ in range(1000):
+            # i = np.random.randint(seg_cont.shape[0])
+            # j = np.random.randint(seg_cont.shape[1])
+            i = np.random.randint(len(seg_cont_points))
+            base_point = seg_cont_points[i]
+            if (base_point[0] - piece.point[0]) > 0 and (base_point[1] - piece.point[1]) > 0:
                 return base_point, start_level
 
     def get_generation(self, **kwargs):
@@ -132,5 +133,5 @@ class LungsAnalyzer(LungsDataLoader):
 
 if __name__ == "__main__":
     l = LungsAnalyzer('0001')
-    a = l.get_generation(patology='covid', segments=5)
+    a = l.get_generation(patology='covid', segments=[1])
     print(a)
