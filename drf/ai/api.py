@@ -25,7 +25,7 @@ def api_commander(**kwargs):
 
 
 if __name__ == "__main__":
-    gen_request = {"id": "0001", "mode": "gen", "patology": "covid", "segments": [1], "quantity": 1, 'size': 1}
+    gen_request = {"id": "0001", "mode": "gen", "patology": "covid", "segments": [2], "quantity": 1, 'size': 1}
     mask_request = {"id": "0001", "mode": "mask", "model": "covid"}
 
     response = api_commander(**mask_request)
