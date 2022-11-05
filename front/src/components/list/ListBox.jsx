@@ -25,7 +25,7 @@ export const ListBox = ({
     <div className="listBox">
        <h1>Исследования</h1>
 
-      <div className='flex gap20'>
+ <div className='flex gap20'>
         {!!list.length ? (
           list.map(item => (
             <Card 
@@ -36,7 +36,6 @@ export const ListBox = ({
           ))
         ) : ('нет данных')}
       </div>
-      
     </div>
   )
 }

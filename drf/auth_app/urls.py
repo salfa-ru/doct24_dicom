@@ -12,7 +12,7 @@ urlpatterns = [
     path('v1/user/me/',
          UserModelViewSet.as_view(
              {'get': 'get_user',
-              'post': 'update_user',
+              # 'post': 'update_user',
               }),
          name='me'),
 ]

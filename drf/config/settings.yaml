@@ -1,8 +1,8 @@
-ENVIRON: false
+ENVIRON: true
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY: 'django-insecure-03rk)n!+rv=gd-eevp2$kecy2=pl_d)06(_2r%_xvx8$clq(im'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG: true
+DEBUG: false
 ALLOWED_HOSTS:
   - '*'
 INSTALLED_APPS:
@@ -18,10 +18,9 @@ INSTALLED_APPS:
   - rest_framework_swagger
   - drf_yasg
   - corsheaders
-  - auth_app
-
-
-
+  - auth_app # Приложение авторизации
+  - api_research_app # Приложение медицинских обследований
+  - api_label_app # модель меток врача
 
 MIDDLEWARE:
   - django.middleware.security.SecurityMiddleware
@@ -29,6 +28,7 @@ MIDDLEWARE:
   - corsheaders.middleware.CorsMiddleware
   - django.middleware.common.CommonMiddleware
   - django.middleware.csrf.CsrfViewMiddleware
+  - corsheaders.middleware.CorsPostCsrfMiddleware
   - django.contrib.auth.middleware.AuthenticationMiddleware
   - django.contrib.messages.middleware.MessageMiddleware
   - django.middleware.clickjacking.XFrameOptionsMiddleware
@@ -97,7 +97,7 @@ REST_FRAMEWORK:
   DEFAULT_PARSER_CLASSES:
     - rest_framework.parsers.JSONParser
   DEFAULT_FILTER_BACKENDS:
-#    - django_filters.rest_framework.DjangoFilterBackend
+    - django_filters.rest_framework.DjangoFilterBackend
   DEFAULT_AUTHENTICATION_CLASSES:
     - rest_framework.authentication.TokenAuthentication
     - rest_framework_simplejwt.authentication.JWTAuthentication
@@ -111,6 +111,8 @@ REST_FRAMEWORK:
 
 EXPIRES_ACCESS_TOKEN_MINUTES: 60
 EXPIRES_REFRESH_TOKEN_MINUTES: 1800
+
+
 
 SWAGGER_SETTINGS:
   USE_SESSION_AUTH: false

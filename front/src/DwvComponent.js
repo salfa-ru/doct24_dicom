@@ -290,13 +290,11 @@ class DwvComponent extends React.Component {
               </div>
             </div>
         </div>
-        
         <a hidden href="#" className="downloadDicomLink hiddenModule">скачать</a>
         <button hidden className="save hiddenModule"  onClick={() => this.onSave()}>save</button>
         <input type="file" name="file" className="downloadFile hiddenModule"/>
        
        <div className="workspace">
-       
         <div className="toolbar">
           <DrawingKit 
             onClick={(func) => this.onClickDrawingKit(func)}
@@ -458,6 +456,7 @@ class DwvComponent extends React.Component {
   onSave = () => {
     let data = this.createData();
 
+    console.log('data', data);
     fetchSaveData(data);
   }
 
@@ -686,7 +685,7 @@ class DwvComponent extends React.Component {
    * Handle a drop event.
    * @param {DragEvent} event The event to handle.
    */
-  fetchImage = async (url) => {
+fetchImage = async (url) => {
     const data = await fetch(url, {
       mode: 'no-cors'
     });
@@ -806,11 +805,10 @@ class DwvComponent extends React.Component {
     console.log('event', event);
     this.state.dwvApp.loadFiles(event[0])
   }
-
   createFormData = async (file) => {
     let formdata = new FormData();
     formdata.append("file", file[0]);
-
+    
     return formdata;
   }
 
