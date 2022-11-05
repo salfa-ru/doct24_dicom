@@ -5,8 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+import ai.api as ai
 from .serializers import ProcessingSerializer
-
 
 class ProcessingViewSet(
         mixins.CreateModelMixin,
@@ -30,9 +30,10 @@ class ProcessingViewSet(
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        result = "Результат"
+        par = serializer.initial_data['data']
+        result = ai.api_commander(**par)
         # headers = self.get_success_headers(serializer.data)
         return Response(data=result,
-                        status=HTTPStatus.CREATED,
+                        status=HTTPStatus.CREATED if result[0] else HTTPStatus.BAD_REQUEST,
                         # headers=headers
                         )
