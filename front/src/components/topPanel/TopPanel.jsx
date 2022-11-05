@@ -6,7 +6,8 @@ import style from "./topPanel.module.scss";
 
 export const TopPanel = ({
   onSave,
-  changeLayoutToList
+  changeLayoutToList,
+  patientData = {}
 }) => {
 
   const onSaveAndReturn = () => {
@@ -19,7 +20,7 @@ export const TopPanel = ({
     <div className={style.topPanel}>
       <div className={style.topPanel__logoBlock}>
         <Logo />
-        <h1>id123456: Covid-19 (подлинная патология)</h1>
+        <h1>id: {patientData.id}</h1>
       </div>
       <div className={style.topPanel__btns}>
         <Button title="Сохранить и вернуться к списку" click={onSaveAndReturn}/>

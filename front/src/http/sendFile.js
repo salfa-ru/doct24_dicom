@@ -1,6 +1,4 @@
 import axios from "axios";
-import { $authHost, $file } from "."
-import { sendFileAPI } from "../utils/API"
 
 export const fetchFile = async (event) => {
   const token = await localStorage.getItem('token')

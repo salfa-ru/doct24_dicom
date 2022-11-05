@@ -83,3 +83,7 @@ h1 {
   display: block;
   visibility: hidden;
 }
+
+.wrap {
+  flex-wrap: wrap;
+}

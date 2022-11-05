@@ -18,6 +18,6 @@ export const fetchList = async () => {
 export const fetchPatientDicom = async (url) => {
   console.log("fetchPatientDicom", url);
 
-  const response = await fetch(url, {mode: 'no-cors'});
-  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  //const response = await fetch(url, {mode: 'no-cors'});
+  //const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 };
