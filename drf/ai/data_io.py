@@ -4,9 +4,7 @@ import numpy as np
 import nibabel as nib
 import SimpleITK as sitk
 from zipfile import ZipFile
-from miscnn.data_loading.interfaces.nifti_io import NIFTI_interface
-from miscnn.data_loading.interfaces.dicom_io import DICOM_interface
-#DICOM_interface, NIFTI_interface
+from miscnn.data_loading.interfaces import DICOM_interface, NIFTI_interface
 from dicom2nifti import dicom_series_to_nifti
 
 

@@ -1,9 +1,9 @@
-# pip
-# setuptools
+pip
+setuptools
 pkg
-# wheel
+wheel
 lungmask
 nibabel
 SimpleITK
-# miscnn
+miscnn
 dicom2nifti
