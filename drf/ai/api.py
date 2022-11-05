@@ -1,6 +1,8 @@
 import os, shutil
+
 from processor import LungsAnalyzer
 from patologies import Piece
+
 
 
 def api_commander(**kwargs):
@@ -32,3 +34,4 @@ if __name__ == "__main__":
     print(response)
     response = api_commander(**gen_request)
     print(response)
+
