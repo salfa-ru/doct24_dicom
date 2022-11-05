@@ -1,25 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, useTheme } from "@mui/styles";
-import Typography from "@mui/material/Typography";
-
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
-import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-
-import Link from "@mui/material/Link";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-
-import Dialog from "@mui/material/Dialog";
-import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
-import Toolbar from "@mui/material/Toolbar";
-
-import TagsTable from "./TagsTable";
 
 import "./DwvComponent.css";
 import dwv from "dwv";
@@ -164,17 +148,23 @@ class DwvComponent extends React.Component {
                 <Select
                   title="Локализация:"
                   list={[
+                    { id: 1, name: "Левое легкое" },
+                    { id: 2, name: "Правое легкое" },
+                  ]}
+                  item={this.state.metaLocalization}
+                  update={(data) => this.setState({ metaLocalization: data })}
+                />
+
+                <Select 
+                  title="Доля:" 
+                  list={[
                     { id: 1, name: "Верхняя доля правого лёгкого" },
                     { id: 2, name: "Средняя доля правого лёгкого" },
                     { id: 3, name: "Нижняя доля правого лёгкого" },
                     { id: 4, name: "Верхняя доля левого лёгкого" },
                     { id: 5, name: "Нижняя доля левого лёгкого" },
                   ]}
-                  item={this.state.metaLocalization}
-                  update={(data) => this.setState({ metaLocalization: data })}
                 />
-
-                <Select title="Доля:" />
 
                 <Select
                   title="Количество:"
@@ -642,12 +632,13 @@ class DwvComponent extends React.Component {
 
   downloadDicom = (link) => {
     let button = document.querySelector(".downloadDicomLink");
-    button.href = "http://92.255.110.75:8000/media/0002.DCM";
+    button.href = link;
 
     button.click();
   };
 
   onDrop2 = async (event) => {
+    console.log('event', event);
     if (event.patient) {
       //let formData = new File();
       //formData.append('file', event.fileList)
@@ -656,10 +647,31 @@ class DwvComponent extends React.Component {
       //setTimeout(() => {
       //  this.state.dwvApp.loadFiles(event.fileList);
       //}, 3000)
+      let data = {
+        isTrusted: true,
+        altKey: false,
+        bubbles: true,
+        button: 0,
+        buttons: 0,
+        cancelBubble: false,
+        cancelable: true,
+        clientX: 784,
+        clientY: 497,
+        composed: true,
+        ctrlKey: false,
+        currentTarget: null,
+        dataTransfer: {
+          files: event.fileList
+        }
+      };
+
+      console.log('event.fileList', event.fileList);
+      this.defaultHandleDragEvent(data);
       this.state.dwvApp.loadFiles(event.fileList);
     } else {
       if (event?.media_file) {
-        fetchPatientDicom(event.media_file);
+        //fetchPatientDicom(event.media_file);
+        this.downloadDicom(event?.media_file);
       }
     }
   };
@@ -673,6 +685,7 @@ class DwvComponent extends React.Component {
     let input = document.querySelector('input[type="file"]');
 
     if (event?.patient && !this.state.incomingFileFromBack) {
+      console.log("onDrop1");
       let { file } = event.patient;
       //console.log('пациент есть incomingFileFromBack нет');
       //let formData = new FormData();
@@ -690,7 +703,8 @@ class DwvComponent extends React.Component {
       this.startCreateDicom(file);
     }
     if (!event?.patient && !this.state.incomingFileFromBack) {
-      //this.defaultHandleDragEvent(event);
+      console.log("onDrop2", event);
+      this.defaultHandleDragEvent(event);
       this.state.dwvApp.loadFiles(event.dataTransfer.files);
 
       //console.log('loadFIle', event.dataTransfer.files);
@@ -698,6 +712,7 @@ class DwvComponent extends React.Component {
     }
 
     if (this.state.incomingFileFromBack) {
+      console.log("onDrop3");
       //console.log('incomingFileFromBack');
       this.state.dwvApp.loadFiles(input.dataTransfer.files);
     }

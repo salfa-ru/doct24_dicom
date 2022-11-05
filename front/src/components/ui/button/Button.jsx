@@ -9,9 +9,12 @@ export const Button = ({
   save,
   title = 'ButtonName',
   click,
+  empty
 }) => {
   return <div 
-            className={style.button}
+            className={[
+              empty ? style.button__empty : style.button
+            ].join(' ')}
             onClick={() => click()}
         >
           {title} 

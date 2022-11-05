@@ -3,16 +3,18 @@ import { getListAPI, sendSaveDataAPI } from "../utils/API";
 
 export const fetchSaveData = async (data) => {
   const res = await $authHost.put(sendSaveDataAPI() + '/3', data);
-
-  console.log("res", res);
 };
 
 export const fetchList = async () => {
   const res = await $authHost.get(getListAPI());
 
+  console.log('fetchList', res);
+
   if (res.status === 200) {
     return res.data;
   }
+
+  return res;
 };
 
 export const fetchPatientDicom = async (url) => {

@@ -5,7 +5,8 @@ import { Button } from '../ui/button/Button';
 import style from './sendFile.module.scss';
 
 export const SendFile = ({
-  onSelectPatient
+  onSelectPatient,
+  setModals
 }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileList, setFileList] = useState(null);
@@ -23,6 +24,7 @@ export const SendFile = ({
   }
 
   const handleUpload = async () => {
+    const token = await localStorage.getItem('token')
     const formData = new FormData();
     formData.append('media_file', selectedFile);
 
@@ -31,7 +33,7 @@ export const SendFile = ({
         headers: {
           "Content-type": "multipart/form-data",
           'accept': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3NzI3MDM5LCJpYXQiOjE2Njc2NDA2MzksImp0aSI6IjVkNTRkYWE5OGEzMDQ5MWE5YWVlNGI2ZmIzZGY2NDQwIiwidXNlcl9pZCI6ImYzNDdhYTYyLTUwYWEtNDI4Yi04NGFhLTllZjIwYjIxMDVhMyJ9.OHF5rloAPIbwMF5Brkxe7DbRHET6medYZnRE66lluL0"`,
+          'Authorization': `Bearer ${token}`,
         },
       })
       .then((res) => {
@@ -47,6 +49,10 @@ export const SendFile = ({
       })
       .catch((err) => {
         console.log(err);
+        setModals({
+          modal: 'error',
+          message: err
+        })
       });
 
     //const result = await res.json();

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Modals } from '../../components/ui/modals/Modals';
 import DwvComponent from '../../DwvComponent';
 import { fetchAuth } from '../../http/auth';
 import { List } from '../list/List';
@@ -7,18 +8,18 @@ export const Home = () => {
 
   const [layout, setLayout] = useState('list');
   const [patientData, setPatientData] = useState({});
+  const [modals, setModals] = useState(false);
+
+  const onCloseModals = () => {
+    setModals(false);
+  }
 
   useEffect(() => {
-    console.log('fetchAuth');
     fetchAuth({
       "username": "user1",
       "password": "123"
     })
   }, []);
-
-  useEffect(() => {
-    console.log('patientData', patientData);
-  }, [patientData])
 
   const LayoutComponent = () => {
     switch (layout) {
@@ -32,34 +33,40 @@ export const Home = () => {
         return <List 
                 changeLayoutToDvw={changeLayoutToDvw} 
                 onSelectPatient={onSelectPatient}
+                setModals={setModals}
               />
         break;
       default:
         return <List 
                 changeLayoutToDvw={changeLayoutToDvw} 
                 onSelectPatient={onSelectPatient}
+                setModals={setModals}
               />
     }
   }
 
   const onSelectPatient = (json) => {
-    console.log('onSelectPatient');
     setPatientData(json);
     setLayout('dvw')
   }
 
   const changeLayoutToDvw = () => {
-    console.log('changeLayout');
     setLayout('dvw');
   }
 
   const changeLayoutToList = () => {
-    console.log('changeLayout');
     setPatientData({});
     setLayout('list');
   }
 
   return (
-    <LayoutComponent />
+    <>
+      <LayoutComponent />
+      <Modals 
+        modals={modals} 
+        onCloseModals={onCloseModals}
+        patientData={patientData}
+      />
+    </>
   )
 }

@@ -9,10 +9,9 @@ export const ListBox = ({
   const [list, setList] = useState([]);
 
   const getList = async () => {
-    console.log('getList');
     let res = await fetchList();
 
-    console.log('res', res);
+    console.log('fetchList', res);
 
     setList(res.results);
   }
