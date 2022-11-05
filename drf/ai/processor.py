@@ -43,6 +43,8 @@ class LungsAnalyzer(LungsDataLoader):
 
     def get_piece_name(self, **kwargs):
         if kwargs['patology'] == 'covid':
+            if kwargs['quantity'] == 2:
+                return 'cov_deep'
             return 'cov_lt'
 
     def load_piece(self, **kwargs):
@@ -76,7 +78,8 @@ class LungsAnalyzer(LungsDataLoader):
                 max_hight = i
         return min_hight, max_hight
 
-    def get_base_point(self, piece, segments):
+    def get_base_point(self, piece, **kwargs):
+        segments = kwargs['segments']
         min_hight, max_hight = self.get_hight_range(segments)
         start_level = (max_hight - piece.shape[0] + min_hight) // 2
         start_level = start_level * (start_level > 0)
@@ -87,8 +90,6 @@ class LungsAnalyzer(LungsDataLoader):
         seg_cont = np.vectorize(lambda x: 1 if 0.7 < x < 0.95 else 0)(seg_cont)
         seg_cont_points = [(i, j) for i, j in zip(*np.nonzero(seg_cont))]
         for _ in range(1000):
-            # i = np.random.randint(seg_cont.shape[0])
-            # j = np.random.randint(seg_cont.shape[1])
             i = np.random.randint(len(seg_cont_points))
             base_point = seg_cont_points[i]
             if (base_point[0] - piece.point[0]) > 0 and (base_point[1] - piece.point[1]) > 0:
@@ -101,9 +102,12 @@ class LungsAnalyzer(LungsDataLoader):
             gen_params = [str(kwargs[key]) for key in gen_keys if kwargs[key]]
             gen_name = '_'.join(gen_params)
             path = path + gen_name
-            if os.path.exists(path):
-                return path
-        return self.perform_generation(gen_name, **kwargs)
+            if not os.path.exists(path):
+                path = self.perform_generation(gen_name, **kwargs)
+            zip_path = path + '.zip'
+            if not os.path.exists(zip_path):
+                zip_path = self.dicom_to_zip(path)
+        return zip_path
 
     def perform_generation(self, gen_name, **kwargs):
         piece = self.load_piece(**kwargs)
@@ -111,7 +115,7 @@ class LungsAnalyzer(LungsDataLoader):
             self.segmentation = self.load_segmentation()
         seg_mask = ~np.isin(self.segmentation, kwargs.get('segments'))
         seg = np.ma.masked_where(seg_mask, self.segmentation)
-        base_point, start_level = self.get_base_point(piece, kwargs.get('segments'))
+        base_point, start_level = self.get_base_point(piece, **kwargs)
         point = (base_point[0] - piece.point[0], base_point[1] - piece.point[1])
         images = self.images.copy()
         for n in range(start_level, start_level + piece.shape[0]):
