@@ -1,16 +1,23 @@
-import { $authHost, $host } from "."
-import { getListAPI, sendSaveDataAPI } from "../utils/API"
+import { $authHost, $host } from ".";
+import { getListAPI, sendSaveDataAPI } from "../utils/API";
 
 export const fetchSaveData = async (data) => {
-  const res = await $authHost.post(sendSaveDataAPI(), data);
+  const res = await $authHost.put(sendSaveDataAPI() + '/3', data);
 
-  console.log('res', res);
-}
+  console.log("res", res);
+};
 
 export const fetchList = async () => {
   const res = await $authHost.get(getListAPI());
 
   if (res.status === 200) {
-    return res.data
+    return res.data;
   }
-}
+};
+
+export const fetchPatientDicom = async (url) => {
+  console.log("fetchPatientDicom", url);
+
+  const response = await fetch(url, {mode: 'no-cors'});
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+};

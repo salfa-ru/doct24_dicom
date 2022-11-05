@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import DwvComponent from '../../DwvComponent';
+import { fetchAuth } from '../../http/auth';
 import { List } from '../list/List';
 
 export const Home = () => {
 
   const [layout, setLayout] = useState('list');
   const [patientData, setPatientData] = useState({});
+
+  useEffect(() => {
+    console.log('fetchAuth');
+    fetchAuth({
+      "username": "user1",
+      "password": "123"
+    })
+  }, []);
 
   useEffect(() => {
     console.log('patientData', patientData);

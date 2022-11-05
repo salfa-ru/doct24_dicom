@@ -8,7 +8,7 @@ export const Card = ({
   item, 
   onSelectPatient 
 }) => {
-  const { patient_code, updated_at } = item;
+  const { patient_code, updated_at, id } = item;
 
   const getResearchData = () => {
     return new Date(updated_at).toLocaleDateString();
@@ -17,7 +17,7 @@ export const Card = ({
     <div className={style.card} key={item.id}>
       <div className={style.card__wrapper}>
         <div className={style.card__top}>
-          <div className={style.card__top_title}>id{patient_code}</div>
+          <div className={style.card__top_title}>id{id}</div>
           <div className={style.card__top_icons}>
             <Icon_create />
             <Icon_trash />

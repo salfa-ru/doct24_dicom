@@ -28,7 +28,7 @@ import { Select } from "./components/ui/select/Select";
 import { DrawingKit } from "./components/drawingKit/DrawingKit";
 import { TopPanel } from "./components/topPanel/TopPanel";
 import { fetchFile } from "./http/sendFile";
-import { fetchSaveData } from "./http/data";
+import { fetchPatientDicom, fetchSaveData } from "./http/data";
 import { $authHost } from "./http";
 
 // Image decoders (for web workers)
@@ -406,14 +406,22 @@ class DwvComponent extends React.Component {
     // possible load from location
     dwv.utils.loadFromUri(window.location.href, app);
 
-    if (this.state.patientData?.id) {
+    console.log('this.state.patientData', this.state.patientData);
 
-      this.onDrop({
+    if (this.state.patientData?.file) {
+      console.log('я загрузил файл сам и гото отрисовать');
+      this.onDrop2({
         patient: true,
-        file: this.state.patientData
+        fileList: this.state.patientData.fileList
       })
 
-      this.downloadDicom(this.state.patientData.media_file)
+      //this.downloadDicom(this.state.patientData.file)
+    } else if (this.state.patientData?.id && !this.state.patientData.file) {
+      console.log('я нажал на пациента и знаю его');
+      this.onDrop2({
+        patient: false,
+        media_file: this.state.patientData.media_file
+      })
     }
   }
 
@@ -460,6 +468,7 @@ class DwvComponent extends React.Component {
       metaKolvo: this.state.metaKolvo,
       metaDolya: this.state.metaDolya,
       metaSize: this.state.metaSize,
+      metaData: this.state.metaDataDraw
     }
 
     return data;
@@ -720,7 +729,32 @@ class DwvComponent extends React.Component {
     button.click();
   }
 
+  onDrop2 = async (event) => {
+    if (event.patient) {
+      console.log('рисую пациента');
+      console.log('onDrop2 event', event.fileList);
+      //let formData = new File();
+      //formData.append('file', event.fileList)
+      //this.defaultHandleDragEvent(event);
+
+      //setTimeout(() => {
+      //  this.state.dwvApp.loadFiles(event.fileList);
+      //}, 3000)
+      this.state.dwvApp.loadFiles(event.fileList);
+    } else {
+      console.log('загружаю');
+      console.log('event', event);
+
+      if (event?.media_file) {
+        fetchPatientDicom(event.media_file)
+      }
+      
+    }
+  }
+
   onDrop = async (event) => {
+
+    console.log('onDrop');
     //this.downloadDicom();
     //console.log('event.dataTransfer.files', event.dataTransfer.files);
    
@@ -728,32 +762,37 @@ class DwvComponent extends React.Component {
     let input = document.querySelector('input[type="file"]');
 
     if (event?.patient && !this.state.incomingFileFromBack) {
+      console.log('onDrop1');
+      console.log('event?.patient', event.patient);
+      let { file } = event.patient;
       //console.log('пациент есть incomingFileFromBack нет');
       //let formData = new FormData();
       //formData.append('file', event.file)
 
 
-      let input = document.querySelector('.downloadFile')
-      const blob = await this.fetchImage('http://92.255.110.75:8000/media/0002.DCM')
-      const dT = new ClipboardEvent('').clipboardData || new DataTransfer()
-      dT.items.add(new File([blob], '0002 (1).DCM'))
-      input.files = dT.files
+      //let input = document.querySelector('.downloadFile')
+      //const blob = await this.fetchImage('http://92.255.110.75:8000/media/0002.DCM')
+      //const dT = new ClipboardEvent('').clipboardData || new DataTransfer()
+      //dT.items.add(new File([blob], '0002 (1).DCM'))
+      //input.files = dT.files
 
-      console.log('input', dT.files);
+      //console.log('input', dT.files);
       
-      //this.setState({incomingFileFromBack: true});
-      //this.startCreateDicom(input.files);
+      this.setState({incomingFileFromBack: true});
+      this.startCreateDicom(file);
     }
     if (!event?.patient && !this.state.incomingFileFromBack) {
-      this.defaultHandleDragEvent(event);
+      console.log('onDrop2');
+      console.log('event', event);
+      //this.defaultHandleDragEvent(event);
       this.state.dwvApp.loadFiles(event.dataTransfer.files);
 
       //console.log('loadFIle', event.dataTransfer.files);
-      let file = await this.createFormData(event.dataTransfer.files);
-      this.sendFile(event.dataTransfer.files);
+      //let file = await this.createFormData(event.dataTransfer.files);
     }
 
     if (this.state.incomingFileFromBack) {
+      console.log('onDrop3');
       //console.log('incomingFileFromBack');
       this.state.dwvApp.loadFiles(input.dataTransfer.files)
     }
@@ -764,7 +803,8 @@ class DwvComponent extends React.Component {
     //console.log('incomingFileFromBack', this.state.incomingFileFromBack);
     //console.log('create dicom');
     //console.log('event', event);
-    this.state.dwvApp.loadFiles(event)
+    console.log('event', event);
+    this.state.dwvApp.loadFiles(event[0])
   }
 
   createFormData = async (file) => {
@@ -774,8 +814,8 @@ class DwvComponent extends React.Component {
     return formdata;
   }
 
-  sendFile = async (file) => {
-    let res = await fetchFile(file);
+  sendFile = (file) => {
+    fetchFile(file);
 
     //console.log('res', res);
   }
