@@ -10,7 +10,8 @@ class LungsAnalyzer(LungsDataLoader):
     def __init__(self, id, segmentation=True):
         super().__init__(id, segmentation)
 
-    def get_mask(self, model='covid'):
+    def get_mask(self, **kwargs):
+        model = kwargs['model']
         path = self.masks_folder + model
         if os.path.exists(path + '.json'):
             mask_json = self.load_mask_json(path + '.json')
@@ -64,7 +65,7 @@ class LungsAnalyzer(LungsDataLoader):
                 matrix[i, j] = np.mean(surround)
         return matrix
 
-    def get_hight_range(self, segments=[1, 2, 3, 4, 5]):
+    def get_hight_range(self, segments):
         min_hight = False
         max_hight = False
         for i in range(self.segmentation.shape[0]):
@@ -75,7 +76,7 @@ class LungsAnalyzer(LungsDataLoader):
                 max_hight = i
         return min_hight, max_hight
 
-    def get_base_point(self, piece, segments=[1, 2, 3, 4, 5]):
+    def get_base_point(self, piece, segments):
         min_hight, max_hight = self.get_hight_range(segments)
         start_level = (max_hight - piece.shape[0] + min_hight) // 2
         start_level = start_level * (start_level > 0)
@@ -96,18 +97,21 @@ class LungsAnalyzer(LungsDataLoader):
     def get_generation(self, **kwargs):
         path = self.path + 'generation/'
         if os.path.exists(path):
-            path = path + '_'.join([str(param) for param in kwargs.values()])
+            gen_keys = ['patology', 'segments', 'quantity', 'size']
+            gen_params = [str(kwargs[key]) for key in gen_keys if kwargs[key]]
+            gen_name = '_'.join(gen_params)
+            path = path + gen_name
             if os.path.exists(path):
                 return path
-        return self.perform_generation(**kwargs)
+        return self.perform_generation(gen_name, **kwargs)
 
-    def perform_generation(self, **kwargs):
+    def perform_generation(self, gen_name, **kwargs):
         piece = self.load_piece(**kwargs)
         if not self.segmentation:
             self.segmentation = self.load_segmentation()
-        seg_mask = ~np.isin(self.segmentation, kwargs.get('segments', [5]))
+        seg_mask = ~np.isin(self.segmentation, kwargs.get('segments'))
         seg = np.ma.masked_where(seg_mask, self.segmentation)
-        base_point, start_level = self.get_base_point(piece, kwargs.get('segments', [5]))
+        base_point, start_level = self.get_base_point(piece, kwargs.get('segments'))
         point = (base_point[0] - piece.point[0], base_point[1] - piece.point[1])
         images = self.images.copy()
         for n in range(start_level, start_level + piece.shape[0]):
@@ -115,7 +119,7 @@ class LungsAnalyzer(LungsDataLoader):
         path = self.path + 'generation/'
         if not os.path.exists(path):
             os.mkdir(path)
-        path = path + '_'.join([str(param) for param in kwargs.values()])
+        path = path + gen_name
         self.save_to_dicom(images, path)
         return path
 
