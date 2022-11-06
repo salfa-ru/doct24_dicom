@@ -9,7 +9,8 @@ import style from "./list.module.scss";
 export const List = ({
   changeLayoutToDvw,
   onSelectPatient,
-  setModals
+  setModals,
+  setPatientData
 }) => {
   return (
     <div className="wrapper">
@@ -23,7 +24,11 @@ export const List = ({
             />
           </div>
 
-          <ListBox onSelectPatient={onSelectPatient} />
+          <ListBox 
+            onSelectPatient={onSelectPatient} 
+            setModals={setModals}
+            setPatientData={setPatientData}
+          />
 
         </div>
       </div>

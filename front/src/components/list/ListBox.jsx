@@ -3,7 +3,9 @@ import { fetchList } from '../../http/data'
 import { Card } from '../ui/card/Card'
 
 export const ListBox = ({
-  onSelectPatient
+  onSelectPatient,
+  setModals,
+  setPatientData
 }) => {
 
   const [list, setList] = useState([]);
@@ -11,9 +13,9 @@ export const ListBox = ({
   const getList = async () => {
     let res = await fetchList();
 
-    console.log('fetchList', res);
-
-    setList(res.results);
+    if (res) {
+      setList(res.results);
+    }
   }
 
   useEffect(() => {
@@ -31,6 +33,8 @@ export const ListBox = ({
               item={item} 
               onSelectPatient={onSelectPatient}
               key={item.id}
+              setModals={setModals}
+              setPatientData={setPatientData}
             />
           ))
         ) : ('нет данных')}

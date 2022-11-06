@@ -5,7 +5,11 @@ import { Select } from "../../../select/Select";
 import style from './genPatology.module.scss';
 
 export const GenPatology = ({
-  patientData
+  patientData,
+  onCloseModals,
+  onSuccess,
+  onError,
+  messageSuccess
 }) => {
   const [patology, setPatology] = useState({ id: 1, name: 'covid' });
   const [localization, setLocalization] = useState({});
@@ -13,16 +17,10 @@ export const GenPatology = ({
   const [quantity, setQuantity] = useState({});
   const [size, setSize] = useState({});
 
-  const onSubmitGeneration = () => {
-    console.log('patientData', patientData);
+  console.log('patientData', patientData);
 
-    //let data = {
-    //  id: 1,
-    //  patology: 'covid',
-    //  segments: [segments.id],
-    //  quantity: 1,
-    //  size: 1,
-    //}
+  const onSubmitGeneration = async () => {
+    console.log('patientData', patientData);
 
     let data = {
       "data": {
@@ -36,7 +34,17 @@ export const GenPatology = ({
 
     console.log('data', data);
 
-    fetchGeneratePatology(data);
+    let responce = await fetchGeneratePatology(data);
+
+    if (responce) {
+      onCloseModals();
+      onSuccess(messageSuccess);
+    } else {
+      onCloseModals();
+      onError(messageSuccess);
+    }
+
+   
   }
 
   return (

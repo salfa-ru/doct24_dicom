@@ -27,6 +27,7 @@ export const Home = () => {
         return <DwvComponent 
                 changeLayoutToList={changeLayoutToList} 
                 patientData={patientData}
+                setModals={setModals}
               />;
         break;
       case 'list':
@@ -34,6 +35,7 @@ export const Home = () => {
                 changeLayoutToDvw={changeLayoutToDvw} 
                 onSelectPatient={onSelectPatient}
                 setModals={setModals}
+                setPatientData={setPatientData}
               />
         break;
       default:
@@ -41,6 +43,7 @@ export const Home = () => {
                 changeLayoutToDvw={changeLayoutToDvw} 
                 onSelectPatient={onSelectPatient}
                 setModals={setModals}
+                setPatientData={setPatientData}
               />
     }
   }

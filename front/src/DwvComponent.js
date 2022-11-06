@@ -91,7 +91,7 @@ class DwvComponent extends React.Component {
   }
 
   render() {
-    const { classes, changeLayoutToList } = this.props;
+    const { classes, changeLayoutToList, setModals } = this.props;
     const {
       versions,
       tools,
@@ -211,7 +211,11 @@ class DwvComponent extends React.Component {
 
           <div className="workspace">
             <div className="toolbar">
-              <DrawingKit onClick={(func) => this.onClickDrawingKit(func)} />
+              <DrawingKit 
+                onClick={(func) => this.onClickDrawingKit(func)} 
+                setModals={setModals}
+                onChangeDrawColor={this.onChangeDrawColor}
+              />
             </div>
             <div id="dwv">
               <div id="layerGroup0" className="layerGroup">
@@ -331,8 +335,16 @@ class DwvComponent extends React.Component {
     }
   }
 
-  onClickDrawingKit(func) {
-    switch (func) {
+  onChangeDrawColor = (color) => {
+    console.log('меняю цвет');
+    this.setState({ drawColor: color })
+
+    console.log('drawColor', this.state.drawColor);
+    this.handleModeDrawing("pencil");
+  }
+
+  onClickDrawingKit(name) {
+    switch (name) {
       case "pencil":
         this.handleModeDrawing("pencil");
         break;
@@ -365,6 +377,7 @@ class DwvComponent extends React.Component {
   onSave = () => {
     let data = this.createData();
 
+    console.log('data', data);
     fetchSaveData(data);
   };
 
@@ -422,7 +435,7 @@ class DwvComponent extends React.Component {
   fillThis = (x, y, sizeX, sizeY) => {
     const canvas = this.getCanvas();
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "red";
+    ctx.fillStyle = this.state.drawColor;
     ctx.fillRect(x, y, sizeX, sizeY);
   };
 
@@ -432,11 +445,9 @@ class DwvComponent extends React.Component {
         ...this.state.metaDataDraw,
         {
           element: "0x0000",
-          group: "0x0002",
-          name: "FileMetaInformationGroupLength",
           x,
           y,
-          color: "red",
+          color: this.state.drawColor,
           size: {
             x: sizeX,
             y: sizeY,

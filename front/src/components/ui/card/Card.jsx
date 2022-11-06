@@ -6,20 +6,41 @@ import style from "./card.module.scss";
 
 export const Card = ({ 
   item, 
-  onSelectPatient 
+  onSelectPatient,
+  setModals,
+  setPatientData
 }) => {
   const { patient_code, updated_at, id } = item;
 
   const getResearchData = () => {
     return new Date(updated_at).toLocaleDateString();
   }
+
+  const onGenPatology = () => {
+    setPatientData(item);
+
+    setModals({
+      modal: 'genPatology',
+      onSuccess: () => setModals({
+        modal: 'success',
+        messageSuccess: 'Запрос на обработку исследования успешно отправлен!'
+      }),
+      onError: () => setModals({
+        modal: 'error',
+      }),
+      
+    })
+  }
+
   return (
     <div className={style.card} key={item.id}>
       <div className={style.card__wrapper}>
         <div className={style.card__top}>
           <div className={style.card__top_title}>id{id}</div>
           <div className={style.card__top_icons}>
-            <Icon_create />
+            <Icon_create 
+              onClick={() => onGenPatology()}
+            />
             <Icon_trash />
           </div>
         </div>
