@@ -1,7 +1,7 @@
 import os, shutil
 
-from processor import LungsAnalyzer
-from patologies import Piece
+from .processor import LungsAnalyzer
+from .patologies import Piece
 
 
 

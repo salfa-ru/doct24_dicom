@@ -1,9 +1,9 @@
 import os
 import pickle
 import numpy as np
-from data_io import LungsDataLoader
-from model_builder import covid_model
-from patologies import Piece
+from .data_io import LungsDataLoader
+from .model_builder import covid_model
+from .patologies import Piece
 
 
 
