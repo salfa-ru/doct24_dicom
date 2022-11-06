@@ -7,9 +7,9 @@ from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Leaders2022 API",
+      title="Alfa API",
       default_version='v1',
-      description="протокол обмена по проекту Leaders2022",
+      description="протокол обмена по проекту Alfa",
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
