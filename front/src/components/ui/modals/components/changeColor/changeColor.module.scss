@@ -1,0 +1,44 @@
+.changeColor {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background: #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  z-index: 999;
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  &__box {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__item {
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    cursor: pointer;
+  }
+}
+
+.red {
+  background: red;
+}
+
+.blue {
+  background: blue;
+}
+
+.yellow {
+  background: yellow;
+}
+
+.green {
+  background: green;
+}

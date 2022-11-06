@@ -1,34 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, useTheme } from "@mui/styles";
-import Typography from "@mui/material/Typography";
-
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
-import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-
-import Link from "@mui/material/Link";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-
-import Dialog from "@mui/material/Dialog";
-import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
-import Toolbar from "@mui/material/Toolbar";
-
-import TagsTable from "./TagsTable";
 
 import "./DwvComponent.css";
 import dwv from "dwv";
-import style from './components/layoutDRW/layoutDRW.module.scss'
+import style from "./components/layoutDRW/layoutDRW.module.scss";
 import { Select } from "./components/ui/select/Select";
 import { DrawingKit } from "./components/drawingKit/DrawingKit";
 import { TopPanel } from "./components/topPanel/TopPanel";
 import { fetchFile } from "./http/sendFile";
-import { fetchSaveData } from "./http/data";
+import { fetchPatientDicom, fetchSaveData } from "./http/data";
 import { $authHost } from "./http";
 
 // Image decoders (for web workers)
@@ -86,7 +70,7 @@ class DwvComponent extends React.Component {
       dwvApp: null,
       modeDrawing: false,
       drawModeCanvas: false,
-      drawColor: 'red',
+      drawColor: "red",
       metaData: [],
       showDicomTags: false,
       toolMenuAnchorEl: null,
@@ -94,7 +78,7 @@ class DwvComponent extends React.Component {
       dropboxClassName: "dropBox",
       borderClassName: "dropBoxBorder",
       hoverClassName: "hover",
-      ctx: '',
+      ctx: "",
       metaDataDraw: [],
       metaPatology: {},
       metaLocalization: {},
@@ -107,7 +91,7 @@ class DwvComponent extends React.Component {
   }
 
   render() {
-    const { classes, changeLayoutToList } = this.props;
+    const { classes, changeLayoutToList, setModals } = this.props;
     const {
       versions,
       tools,
@@ -131,182 +115,114 @@ class DwvComponent extends React.Component {
     return (
       <div className="wrapper">
         <div className="container">
-        <LinearProgress variant="determinate" value={loadProgress} />
-        {/*<Stack direction="row" spacing={1} padding={1} justifyContent="center">
-          <Button
-            variant="contained"
-            color="primary"
-            aria-owns={toolMenuAnchorEl ? "simple-menu" : null}
-            aria-haspopup="true"
-            onClick={this.handleMenuButtonClick}
-            disabled={!dataLoaded}
-            size="medium"
-          >
-            {this.state.selectedTool}
-            <ArrowDropDownIcon className={classes.iconSmall} />
-          </Button>
-          <Menu
-            id="simple-menu"
-            anchorEl={toolMenuAnchorEl}
-            open={Boolean(toolMenuAnchorEl)}
-            onClose={this.handleMenuClose}
-          >
-            {toolsMenuItems}
-          </Menu>
+          <LinearProgress variant="determinate" value={loadProgress} />
 
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!dataLoaded}
-            onClick={this.onReset}
-          >
-            Reset
-          </Button>
+          <TopPanel
+            onSave={this.toggleButtonSave}
+            changeLayoutToList={changeLayoutToList}
+            patientData={this.state.patientData}
+          />
 
-          {this.state.modeDrawing ? (
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!dataLoaded}
-              onClick={this.handleModeDrawing}
-            >
-              Включить режим разметки
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!dataLoaded}
-              onClick={this.handleModeDrawing}
-            >
-              Выключить режим разметки
-            </Button>
-          )}
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleTagsDialogOpen}
-            disabled={!dataLoaded}
-            size="medium"
-          >
-            Tags
-          </Button>
-          <Dialog
-            open={this.state.showDicomTags}
-            onClose={this.handleTagsDialogClose}
-            TransitionComponent={TransitionUp}
-            classes={{ paper: classes.tagsDialog }}
-          >
-            <AppBar className={classes.appBar}>
-              <Toolbar>
-                <IconButton
-                  color="inherit"
-                  onClick={this.handleTagsDialogClose}
-                  aria-label="Close"
-                >
-                  <CloseIcon />
-                </IconButton>
-                <Typography
-                  variant="h6"
-                  color="inherit"
-                  className={classes.flex}
-                >
-                  DICOM Tags
-                </Typography>
-              </Toolbar>
-            </AppBar>
-            <TagsTable data={metaData} />
-          </Dialog>
-        </Stack>*/}
-
-       <TopPanel onSave={this.toggleButtonSave} changeLayoutToList={changeLayoutToList} />
-
-        {/*<div >
+          {/*<div >
           <div>Разметка Ивановой А.А.</div>
           <div>Разметка Петровой В.С.</div>
           <div>Разметка Соколовой И.Д.</div>
         </div>*/}
-        
-        <div className={style.dataMetka__container}>
-        <div className={style.dataMetka}>
+
+          <div className={style.dataMetka__container}>
+            <div className={style.dataMetka}>
               {/*<h2>Данные разметки:</h2>*/}
 
               <div className={style.dataMetka__list}>
-                <Select 
+                <Select
                   title="Патология:"
                   list={[
-                    {id: 1, name: 'COVID-19'},
-                    {id: 2, name: 'Рак лёгкого'},
-                    {id: 3, name: 'Метастатиче ское поражение лёгких'},
+                    { id: 1, name: "COVID-19" },
+                    { id: 2, name: "Рак лёгкого" },
+                    { id: 3, name: "Метастатиче ское поражение лёгких" },
                   ]}
                   item={this.state.metaPatology}
-                  update={(data) => this.setState({ metaPatology: data})}
+                  update={(data) => this.setState({ metaPatology: data })}
                 />
 
-                <Select 
+                <Select
                   title="Локализация:"
                   list={[
-                    {id: 1, name: 'Верхняя доля правого лёгкого'},
-                    {id: 2, name: 'Средняя доля правого лёгкого'},
-                    {id: 3, name: 'Нижняя доля правого лёгкого'},
-                    {id: 4, name: 'Верхняя доля левого лёгкого'},
-                    {id: 5, name: 'Нижняя доля левого лёгкого'},
+                    { id: 1, name: "Левое легкое" },
+                    { id: 2, name: "Правое легкое" },
                   ]}
                   item={this.state.metaLocalization}
-                  update={(data) => this.setState({ metaLocalization: data})}
+                  update={(data) => this.setState({ metaLocalization: data })}
                 />
 
                 <Select 
-                  title="Доля:"
+                  title="Доля:" 
+                  list={[
+                    { id: 1, name: "Верхняя доля правого лёгкого" },
+                    { id: 2, name: "Средняя доля правого лёгкого" },
+                    { id: 3, name: "Нижняя доля правого лёгкого" },
+                    { id: 4, name: "Верхняя доля левого лёгкого" },
+                    { id: 5, name: "Нижняя доля левого лёгкого" },
+                  ]}
                 />
 
-                <Select 
+                <Select
                   title="Количество:"
                   list={[
-                    {id: 1, name: 'Единичное (1-3)'},
-                    {id: 2, name: 'Немногочисленные (4-10)'},
-                    {id: 3, name: 'Многочисленные (>10)'},
+                    { id: 1, name: "Единичное (1-3)" },
+                    { id: 2, name: "Немногочисленные (4-10)" },
+                    { id: 3, name: "Многочисленные (>10)" },
                   ]}
                   item={this.state.metaKolvo}
-                  update={(data) => this.setState({ metaKolvo: data})}
+                  update={(data) => this.setState({ metaKolvo: data })}
                 />
 
-                <Select 
+                <Select
                   title="Размеры:"
                   list={[
-                    {id: 1, name: '5 мм'},
-                    {id: 2, name: '5-10 мм'},
-                    {id: 3, name: '10-20 мм'},
-                    {id: 4, name: '>20 мм'},
+                    { id: 1, name: "5 мм" },
+                    { id: 2, name: "5-10 мм" },
+                    { id: 3, name: "10-20 мм" },
+                    { id: 4, name: ">20 мм" },
                   ]}
                   item={this.state.metaSize}
-                  update={(data) => this.setState({ metaSize: data})}
+                  update={(data) => this.setState({ metaSize: data })}
                 />
 
-                <Select 
-                  title="Подлинность:"
-                />
+                <Select title="Подлинность:" />
               </div>
             </div>
-        </div>
-        <a hidden href="#" className="downloadDicomLink hiddenModule">скачать</a>
-        <button hidden className="save hiddenModule"  onClick={() => this.onSave()}>save</button>
-        <input type="file" name="file" className="downloadFile hiddenModule"/>
-       
-       <div className="workspace">
-        <div className="toolbar">
-          <DrawingKit 
-            onClick={(func) => this.onClickDrawingKit(func)}
+          </div>
+          <a hidden href="#" className="downloadDicomLink hiddenModule">
+            скачать
+          </a>
+          <button
+            hidden
+            className="save hiddenModule"
+            onClick={() => this.onSave()}
+          >
+            save
+          </button>
+          <input
+            type="file"
+            name="file"
+            className="downloadFile hiddenModule"
           />
-        </div>
-        <div id="dwv">
-            <div id="layerGroup0" className="layerGroup">
-              <div id="dropBox"></div>
+
+          <div className="workspace">
+            <div className="toolbar">
+              <DrawingKit 
+                onClick={(func) => this.onClickDrawingKit(func)} 
+                setModals={setModals}
+                onChangeDrawColor={this.onChangeDrawColor}
+              />
+            </div>
+            <div id="dwv">
+              <div id="layerGroup0" className="layerGroup">
+                <div id="dropBox"></div>
+              </div>
             </div>
           </div>
-       </div>
-      
         </div>
       </div>
     );
@@ -404,43 +320,57 @@ class DwvComponent extends React.Component {
     // possible load from location
     dwv.utils.loadFromUri(window.location.href, app);
 
-     if (this.state.patientData?.id) {
-
-      this.onDrop({
+    if (this.state.patientData?.file) {
+      this.onDrop2({
         patient: true,
-        file: this.state.patientData
-      })
-      this.downloadDicom(this.state.patientData.media_file)
+        fileList: this.state.patientData.fileList,
+      });
+
+      //this.downloadDicom(this.state.patientData.file)
+    } else if (this.state.patientData?.id && !this.state.patientData.file) {
+      this.onDrop2({
+        patient: false,
+        media_file: this.state.patientData.media_file,
+      });
     }
   }
 
-  onClickDrawingKit(func) {
-    switch(func) {
-      case 'pencil':
-        this.handleModeDrawing('pencil');
+  onChangeDrawColor = (color) => {
+    console.log('меняю цвет');
+    this.setState({ drawColor: color })
+
+    console.log('drawColor', this.state.drawColor);
+    this.handleModeDrawing("pencil");
+  }
+
+  onClickDrawingKit(name) {
+    switch (name) {
+      case "pencil":
+        this.handleModeDrawing("pencil");
         break;
-      case 'contrast':
-        this.handleModeDrawing('WindowLevel');
+      case "contrast":
+        this.handleModeDrawing("WindowLevel");
         break;
-      case 'zoom':
-        this.handleModeDrawing('ZoomAndPan')
+      case "zoom":
+        this.handleModeDrawing("ZoomAndPan");
         break;
-      case 'Scroll':
-        this.handleModeDrawing('Scroll')
+      case "Scroll":
+        this.handleModeDrawing("Scroll");
         break;
-      case 'colorFill':
+      case "colorFill":
         this.onChangeColorFill();
         break;
-      default: break;
+      default:
+        break;
     }
   }
 
   onChangeColorFill() {
-    console.log('colorfill');
+    console.log("colorfill");
   }
 
   toggleButtonSave() {
-    let button = document.querySelector('.save');
+    let button = document.querySelector(".save");
     button.click();
   }
 
@@ -449,7 +379,7 @@ class DwvComponent extends React.Component {
 
     console.log('data', data);
     fetchSaveData(data);
-  }
+  };
 
   createData = () => {
     let data = {
@@ -458,10 +388,11 @@ class DwvComponent extends React.Component {
       metaKolvo: this.state.metaKolvo,
       metaDolya: this.state.metaDolya,
       metaSize: this.state.metaSize,
-    }
+      metaData: this.state.metaDataDraw,
+    };
 
     return data;
-  }
+  };
 
   /**
    * Handle a change tool event.
@@ -478,114 +409,113 @@ class DwvComponent extends React.Component {
   };
 
   startDraw() {
-    this.setState({ modeDrawing: true })
-    this.onChangeTool('Draw')
+    this.setState({ modeDrawing: true });
+    this.onChangeTool("Draw");
     this.modeCanvasOn();
   }
 
   stopDraw(func) {
-    this.setState({ modeDrawing: false })
-    this.onChangeTool(func)
+    this.setState({ modeDrawing: false });
+    this.onChangeTool(func);
     this.modeCanvasOff();
   }
 
   handleModeDrawing = (func) => {
-    if (func === 'pencil' && this.state.modeDrawing === true) {
+    if (func === "pencil" && this.state.modeDrawing === true) {
       return;
-    } else if (func === 'pencil' && this.state.modeDrawing === false) {
+    } else if (func === "pencil" && this.state.modeDrawing === false) {
       this.startDraw();
-    } else if (func !== 'pencil' && this.state.modeDrawing === true) {
+    } else if (func !== "pencil" && this.state.modeDrawing === true) {
       this.stopDraw(func);
-    } else if (func !== 'pencil' && this.state.modeDrawing === false) {
-      this.onChangeTool(func)
+    } else if (func !== "pencil" && this.state.modeDrawing === false) {
+      this.onChangeTool(func);
     }
-    
-  }
+  };
 
   fillThis = (x, y, sizeX, sizeY) => {
     const canvas = this.getCanvas();
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'red';
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = this.state.drawColor;
     ctx.fillRect(x, y, sizeX, sizeY);
-  }
+  };
 
-  logsAfterFill = ({x, y, sizeX, sizeY}) => {
-    this.setState({ metaDataDraw: [
-      ...this.state.metaDataDraw,
-      {
-        element: "0x0000",
-        group :"0x0002",
-        name: "FileMetaInformationGroupLength",
-        x,
-        y,
-        color: "red",
-        size: {
-          x: sizeX,
-          y: sizeY
-        }
-      }
-    ] })
-  }
+  logsAfterFill = ({ x, y, sizeX, sizeY }) => {
+    this.setState({
+      metaDataDraw: [
+        ...this.state.metaDataDraw,
+        {
+          element: "0x0000",
+          x,
+          y,
+          color: this.state.drawColor,
+          size: {
+            x: sizeX,
+            y: sizeY,
+          },
+        },
+      ],
+    });
+  };
 
   getCoords = (e) => {
     //let x = e.clientX - e.target.offsetLeft,
     //    y = e.clientY - e.target.offsetTop;
-    let elem = document.querySelector('.canvasDrawElement');
+    let elem = document.querySelector(".canvasDrawElement");
     let ClientRect = elem.getBoundingClientRect();
     let x = e.clientX - ClientRect.left;
     let y = e.clientY - ClientRect.top;
 
-    return {x, y}
-  }
+    return { x, y };
+  };
 
   fillFromCoords = (e) => {
     const coords = this.getCoords(e);
-    const {x, y} = coords;
+    const { x, y } = coords;
     let sizeX = 4,
-        sizeY = 4;
-    this.fillThis(x, y, sizeX, sizeY)
-    this.logsAfterFill({x, y, sizeX, sizeY})
-  }
+      sizeY = 4;
+    this.fillThis(x, y, sizeX, sizeY);
+    this.logsAfterFill({ x, y, sizeX, sizeY });
+  };
 
   onMouseMove = (event) => {
     if (this.state.drawModeCanvas) {
-      this.fillFromCoords(event)
+      this.fillFromCoords(event);
     }
-  }
+  };
   onMouseDown = () => {
-    const canvas = this.getCanvas()
-    canvas.addEventListener('mousemove', this.onMouseMove)
-  }
+    const canvas = this.getCanvas();
+    canvas.addEventListener("mousemove", this.onMouseMove);
+  };
   onMouseUp = () => {
-    const canvas = this.getCanvas()
-    canvas.removeEventListener('mousemove', this.onMouseMove)
-  }
+    const canvas = this.getCanvas();
+    canvas.removeEventListener("mousemove", this.onMouseMove);
+  };
 
   modeCanvasOn = async () => {
-    await this.initCanvasDraw('layerGroup0');
+    await this.initCanvasDraw("layerGroup0");
 
-    this.handleDrawModeCanvas()
+    this.handleDrawModeCanvas();
 
-    this.drawExistingData()
-  }
+    this.drawExistingData();
+  };
 
   modeCanvasOff = () => {
-    const canvas = this.getCanvas()
-    canvas.removeEventListener('mousemove', this.onMouseMove)
-    this.handleDrawModeCanvas()
+    const canvas = this.getCanvas();
+    canvas.removeEventListener("mousemove", this.onMouseMove);
+    this.handleDrawModeCanvas();
 
     this.removeCanvasDrawElement();
-  }
+  };
 
   getCanvas = () => {
-    let canvas = document.querySelector('.canvasDrawElement');
+    let canvas = document.querySelector(".canvasDrawElement");
 
     return canvas;
-  }
+  };
 
   handleDrawModeCanvas = () => {
-    this.setState({drawModeCanvas: !this.state.drawModeCanvas})
-  }
+    this.setState({ drawModeCanvas: !this.state.drawModeCanvas });
+  };
   /**
    * Handle a change draw shape event.
    * @param {string} shape The new shape name.
@@ -675,131 +605,155 @@ class DwvComponent extends React.Component {
    * Handle a drop event.
    * @param {DragEvent} event The event to handle.
    */
-fetchImage = async (url) => {
+  fetchImage = async (url) => {
     const data = await fetch(url, {
-      mode: 'no-cors'
+      mode: "no-cors",
     });
+    const token = await localStorage.getItem('token')
+    console.log('заливаю файл на сервер');
 
     const data2 = await $authHost.request({
       method: "get",
-      mode: 'no-cors',
+      mode: "no-cors",
       headers: {
         //"Access-Control-Allow-Origin" : '*',
         "Content-Type": "multipart/form-data",
-        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3NTQ2NTU4LCJpYXQiOjE2Njc0NjAxNTgsImp0aSI6IjcxY2U2NDkwMTE2MjQ4NDhhOTE3NTE4MTc4M2FhZjIxIiwidXNlcl9pZCI6ImQyOWQwNDdjLWM1OWYtNGJiNi05ZGU1LWRkMjZjZjJjMDM1MCJ9.i-imlbd3oRMObW8d_thdJCJYsUoQ6tKRIZU4stvWkAg`,
-        'accept': 'application/json'
+        Authorization: `Bearer ${token}`,
+        accept: "application/json",
       },
       url: "http://92.255.110.75:8000/media/0002.DCM",
       onUploadProgress: (res) => {
-        console.log('res', res);
-      }
+        console.log("res", res);
+      },
     });
 
-    console.log('data2', data2);
-
     const buffer = await data.arrayBuffer();
-    const blob = new Blob([buffer], { type: "application/dicom"});
+    const blob = new Blob([buffer], { type: "application/dicom" });
 
     return blob;
-  }
+  };
 
   fetchDataTranfer = async (info) => {
-    let dt  = new DataTransfer();
-    dt.items.add(new File([info], 'file', {type: 'text/plain'}));
+    let dt = new DataTransfer();
+    dt.items.add(new File([info], "file", { type: "text/plain" }));
     let file_list = dt.files;
 
     return file_list;
-  }
-    
+  };
+
   downloadDicom = (link) => {
-    let button = document.querySelector('.downloadDicomLink');
-    button.href = 'http://92.255.110.75:8000/media/0002.DCM';
+    let button = document.querySelector(".downloadDicomLink");
+    button.href = link;
 
     button.click();
-  }
+  };
+
+  onDrop2 = async (event) => {
+    console.log('event', event);
+    if (event.patient) {
+      //let formData = new File();
+      //formData.append('file', event.fileList)
+      //this.defaultHandleDragEvent(event);
+
+      //setTimeout(() => {
+      //  this.state.dwvApp.loadFiles(event.fileList);
+      //}, 3000)
+      let data = {
+        isTrusted: true,
+        altKey: false,
+        bubbles: true,
+        button: 0,
+        buttons: 0,
+        cancelBubble: false,
+        cancelable: true,
+        clientX: 784,
+        clientY: 497,
+        composed: true,
+        ctrlKey: false,
+        currentTarget: null,
+        dataTransfer: {
+          files: event.fileList
+        }
+      };
+
+      console.log('event.fileList', event.fileList);
+      this.defaultHandleDragEvent(data);
+      this.state.dwvApp.loadFiles(event.fileList);
+    } else {
+      if (event?.media_file) {
+        //fetchPatientDicom(event.media_file);
+        this.downloadDicom(event?.media_file);
+      }
+    }
+  };
 
   onDrop = async (event) => {
+    console.log("onDrop");
     //this.downloadDicom();
     //console.log('event.dataTransfer.files', event.dataTransfer.files);
-   
+
     // load files
     let input = document.querySelector('input[type="file"]');
 
     if (event?.patient && !this.state.incomingFileFromBack) {
+      console.log("onDrop1");
+      let { file } = event.patient;
       //console.log('пациент есть incomingFileFromBack нет');
       //let formData = new FormData();
       //formData.append('file', event.file)
 
+      //let input = document.querySelector('.downloadFile')
+      //const blob = await this.fetchImage('http://92.255.110.75:8000/media/0002.DCM')
+      //const dT = new ClipboardEvent('').clipboardData || new DataTransfer()
+      //dT.items.add(new File([blob], '0002 (1).DCM'))
+      //input.files = dT.files
 
-      let input = document.querySelector('.downloadFile')
-      const blob = await this.fetchImage('http://92.255.110.75:8000/media/0002.DCM')
-      const dT = new ClipboardEvent('').clipboardData || new DataTransfer()
-      dT.items.add(new File([blob], '0002 (1).DCM'))
-      input.files = dT.files
+      //console.log('input', dT.files);
 
-      console.log('input', dT.files);
-      
-      //this.setState({incomingFileFromBack: true});
-      //this.startCreateDicom(input.files);
+      this.setState({ incomingFileFromBack: true });
+      this.startCreateDicom(file);
     }
     if (!event?.patient && !this.state.incomingFileFromBack) {
-  onDrop = async (event) => {
-    //console.log('event.dataTransfer.files', event.dataTransfer.files);
-   
-    // load files
-
-    if (event?.patient) {
-      let formData = new FormData();
-      formData.append('file', event.file)
-
-      console.log('formData', formData.get('file'));
-      this.state.dwvApp.loadFiles(formData)
-    } else {
+      console.log("onDrop2", event);
       this.defaultHandleDragEvent(event);
       this.state.dwvApp.loadFiles(event.dataTransfer.files);
 
       //console.log('loadFIle', event.dataTransfer.files);
-      let file = await this.createFormData(event.dataTransfer.files);
-      this.sendFile(event.dataTransfer.files);
+      //let file = await this.createFormData(event.dataTransfer.files);
     }
 
     if (this.state.incomingFileFromBack) {
+      console.log("onDrop3");
       //console.log('incomingFileFromBack');
-      this.state.dwvApp.loadFiles(input.dataTransfer.files)
+      this.state.dwvApp.loadFiles(input.dataTransfer.files);
     }
-   
   };
 
   startCreateDicom(event) {
-    //console.log('incomingFileFromBack', this.state.incomingFileFromBack);
-    //console.log('create dicom');
-    //console.log('event', event);
-    this.state.dwvApp.loadFiles(event)
+    this.state.dwvApp.loadFiles(event[0]);
   }
   createFormData = async (file) => {
     let formdata = new FormData();
     formdata.append("file", file[0]);
-    
+
     return formdata;
-  }
+  };
 
-  sendFile = async (file) => {
-    let res = await fetchFile(file);
-
-    //console.log('res', res);
-  }
+  sendFile = (file) => {
+    fetchFile(file);
+  };
 
   initCanvasDraw = async (layer) => {
-    const oldCanvas = await document.querySelector('.canvasDrawElement');
-    const layer2 = await document.querySelector('.layer2');
+    const oldCanvas = await document.querySelector(".canvasDrawElement");
+    const layer2 = await document.querySelector(".layer2");
 
     if (oldCanvas) {
-      oldCanvas.classList.remove('hidden');
+      oldCanvas.classList.remove("hidden");
       return false;
     }
 
     const layerDiv = await document.querySelector(`#${layer}`);
-    const someCanvas = await document.querySelector('#dwv');
+    const someCanvas = await document.querySelector("#dwv");
     //const someCanvasWidth = someCanvas.offsetWidth;
     let width = 900;
     let heigth = 900;
@@ -809,27 +763,27 @@ fetchImage = async (url) => {
     //}
 
     const div = document.createElement("div");
-    div.classList.add('layer2');
+    div.classList.add("layer2");
 
     const canvasDrawElement = document.createElement("canvas");
-    canvasDrawElement.classList.add('canvasDrawElement');
-    canvasDrawElement.style.zIndex = '500';
-    canvasDrawElement.setAttribute('width', width);
-    canvasDrawElement.setAttribute('height', heigth);
-    canvasDrawElement.setAttribute('drawMode', false);
-    canvasDrawElement.style.border = '1px solid red';
+    canvasDrawElement.classList.add("canvasDrawElement");
+    canvasDrawElement.style.zIndex = "500";
+    canvasDrawElement.setAttribute("width", width);
+    canvasDrawElement.setAttribute("height", heigth);
+    canvasDrawElement.setAttribute("drawMode", false);
+    canvasDrawElement.style.border = "1px solid red";
 
-    layerDiv.insertAdjacentElement('beforeend', div);
-    div.insertAdjacentElement('afterbegin', canvasDrawElement);
+    layerDiv.insertAdjacentElement("beforeend", div);
+    div.insertAdjacentElement("afterbegin", canvasDrawElement);
 
-    canvasDrawElement.addEventListener('mousedown', this.onMouseDown)
-    canvasDrawElement.addEventListener('mouseup', this.onMouseUp)
+    canvasDrawElement.addEventListener("mousedown", this.onMouseDown);
+    canvasDrawElement.addEventListener("mouseup", this.onMouseUp);
 
     return true;
-  }
+  };
 
   removeCanvasDrawElement() {
-    let div = document.querySelector('.layer2');
+    let div = document.querySelector(".layer2");
     div.remove();
   }
 
@@ -837,12 +791,12 @@ fetchImage = async (url) => {
     let data = this.state.metaDataDraw;
 
     if (!!data.length) {
-      data.forEach(el => {
-        let { x, y, size} = el;
+      data.forEach((el) => {
+        let { x, y, size } = el;
         let sizeX = size.x;
         let sizeY = size.y;
         this.fillThis(x, y, sizeX, sizeY);
-      })
+      });
     }
   }
 
@@ -864,7 +818,9 @@ fetchImage = async (url) => {
       // check content
       if (box.innerHTML === "") {
         const p = document.createElement("p");
-        p.appendChild(document.createTextNode("Перетащите сюда скаченный Dicom файлик"));
+        p.appendChild(
+          document.createTextNode("Перетащите сюда скаченный Dicom файлик")
+        );
         box.appendChild(p);
       }
       // show box

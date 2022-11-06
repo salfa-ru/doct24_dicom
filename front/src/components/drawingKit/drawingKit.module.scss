@@ -8,8 +8,14 @@
     border-bottom: 1px solid #DADADA;
     padding: 14px 9px;
     list-style-type: none;
+    cursor: pointer;
+    position: relative;
   }
   & ul li:last-child {
     border-bottom: none;
   }
+}
+
+.activeKit {
+  fill: red;
 }
