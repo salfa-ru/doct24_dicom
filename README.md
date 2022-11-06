@@ -25,11 +25,9 @@
 
 Проект собираетсяна трех контейнерах:
 
-drf_db_1 - контейнер с базой данных PostgresSQL
-drf_web_1 - контейнер с сервсисом gunicorn, Django Rest Framework, и модулем исскуственного интелекта
-drf_nginx_1 - контейнер с сервисом nginx
-
-Проект будет доступе на порту 8000
+*drf_db_1 - контейнер с базой данных PostgresSQL
+*drf_web_1 - контейнер с сервсисом gunicorn, Django Rest Framework, и модулем исскуственного интелекта
+*drf_nginx_1 - контейнер с сервисом nginx
 
 Сборка и запуск контейнеров
 ```docker-compose up -d --build```
