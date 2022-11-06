@@ -24,6 +24,7 @@ COPY . .
 COPY ./requirements.txt .
 RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels numpy
 RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels torch
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels pydicom
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 #########
