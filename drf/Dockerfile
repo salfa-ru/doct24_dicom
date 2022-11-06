@@ -22,6 +22,7 @@ COPY . .
 
 # install dependencies
 COPY ./requirements.txt .
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels torch
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 #########
