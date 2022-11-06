@@ -1,9 +1,5 @@
-pip
-setuptools
-pkg
-wheel
+numpy
 lungmask
 nibabel
-SimpleITK
 miscnn
 dicom2nifti

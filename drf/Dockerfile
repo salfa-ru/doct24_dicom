@@ -17,12 +17,12 @@ RUN apt-get update && apt-get -y install postgresql-server-dev-all gcc libpq-dev
 
 # lint
 RUN pip install --upgrade pip
+RUN python -m pip install --upgrade pip
 COPY . .
 
 # install dependencies
 COPY ./requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
-
+#RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements_ai.txt
 
 #########
 # FINAL #
