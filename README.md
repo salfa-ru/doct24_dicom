@@ -53,3 +53,9 @@
 
 ![image](https://user-images.githubusercontent.com/42509323/200182266-6f17acce-1984-4525-9ea2-f2b95b670fe5.png)
 
+
+# 5. Технические характеристики сервера
+
+4 CPU • 8 ГБ RAM • 30 ГБ NVMe Ubuntu 22.04
+
+
