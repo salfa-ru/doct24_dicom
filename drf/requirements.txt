@@ -12,6 +12,14 @@ psycopg2
 gunicorn
 
 numpy
+nvidia-cuda-nvrtc-cu11
+nvidia-cudnn-cu11
+nvidia-cublas-cu11
+typing-extensions
+nvidia-cuda-runtime-cu11
+setuptools
+wheel
+pydicom
 lungmask
 nibabel
 miscnn
