@@ -1,0 +1,27 @@
+.modals {
+  position: absolute;
+  top: calc(50% - 200px);
+  left: calc(50% - 200px);
+  &__wrapper {
+    background-color: #F9F9F9;
+    border-radius: 33px;
+    padding: 30px;
+    max-width: 560px;
+    min-width: 400px;
+  }
+  &__header {
+    display: flex;
+    justify-content: end;
+    & button {
+      cursor: pointer;
+    }
+  }
+  &__body {
+    & h1 {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 24px;
+    }
+  }
+}

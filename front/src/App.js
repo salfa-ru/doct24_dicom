@@ -10,6 +10,7 @@ import './App.css';
 import DwvComponent from './DwvComponent';
 import { List } from './pages/list/List';
 import { Home } from './pages/home/Home';
+import { SendFile } from './components/sendFile/SendFile';
 
 
 
@@ -31,6 +32,7 @@ class App extends Component {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="App">
+          {/*<SendFile />*/}
           <Home />
         </div>
       </ThemeProvider>
