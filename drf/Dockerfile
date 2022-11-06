@@ -13,6 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install psycopg2 dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get update && apt-get -y install postgresql-server-dev-all gcc libpq-dev python3-dev musl-dev -y
 
 # lint
