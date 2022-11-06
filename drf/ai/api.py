@@ -1,6 +1,6 @@
 import os, shutil, requests, json
-from .processor import LungsAnalyzer
-from .patologies import Piece
+from processor import LungsAnalyzer
+from patologies import Piece
 
 
 def api_commander(**kwargs):
@@ -68,7 +68,7 @@ def get_media_path(id):
 
 
 if __name__ == "__main__":
-    gen_request = {"id": "0009", "mode": "gen", "patology": "covid", "segments": [1, 2], "quantity": 2,
+    gen_request = {"id": "0009", "mode": "gen", "patology": "covid", "segments": [5], "quantity": 1,
                    'size': 1}
     mask_request = {"id": "0008", "mode": "mask", "model": "covid"}
 
