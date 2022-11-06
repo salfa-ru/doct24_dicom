@@ -38,5 +38,12 @@ drf_nginx_1 - контейнер с сервисом nginx
 
 Сервис API работает на порту 8000.
 
-Доступе сервис свагер http://host:8000/
+Доступе сервис свагер ```http://host:8000/```
 ![image](https://user-images.githubusercontent.com/42509323/200181939-050094c3-09d0-45a5-9cf2-fb6fa7fb5462.png)
+
+Также стандартная админка: ```http://host:8000/admin/```
+Достус осуществляется через предустановленный имя пользователя и пароля:
+* Имя пользовател:admin
+* Пароль: admin
+![image](https://user-images.githubusercontent.com/42509323/200182266-6f17acce-1984-4525-9ea2-f2b95b670fe5.png)
+
