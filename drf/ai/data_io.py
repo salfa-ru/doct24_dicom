@@ -1,5 +1,6 @@
 import os, json, re
 import lungmask
+from lungmask import mask
 import numpy as np
 import nibabel as nib
 import SimpleITK as sitk

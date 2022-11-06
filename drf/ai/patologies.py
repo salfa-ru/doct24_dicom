@@ -10,7 +10,8 @@ class Piece():
         self.shape = self.data.shape
 
     def __getitem__(self, item):
-        return np.ma.MaskedArray(self.data[item], self.mask[item])
+        masked_array = np.ma.MaskedArray(self.data[item], self.mask[item])
+        return Piece(masked_array, self.point)
 
     def dump(self, path):
         with open(path, 'wb') as f:
