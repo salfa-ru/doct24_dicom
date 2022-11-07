@@ -24,7 +24,7 @@ COPY . .
 # install dependencies
 COPY ./requirements.txt .
 RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels numpy
-RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels nvidia-cuda-nvrtc-cu11 nvidia_cudnn_cu11 nvidia-cudnn-cu11 nvidia-cublas-cu11 typing-extensions nvidia-cuda-runtime-cu11 setuptools wheel
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels nvidia-cuda-nvrtc-cu11 nvidia_cudnn_cu11 nvidia-cudnn-cu11 nvidia-cublas-cu11 typing-extensions nvidia-cuda-runtime-cu11 setuptools wheel tensorflow scikit-learn
 RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels torch
 RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels pydicom
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt

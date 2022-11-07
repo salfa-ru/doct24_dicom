@@ -23,5 +23,7 @@ wheel
 pydicom
 lungmask
 nibabel
+tensorflow
+scikit-learn
 miscnn
 dicom2nifti
