@@ -56,6 +56,7 @@ WORKDIR $APP_HOME
 RUN apt-get update && apt-get install libpq-dev python3-dev -y
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install numpy
 RUN pip install --no-cache /wheels/*
 
 # copy project
