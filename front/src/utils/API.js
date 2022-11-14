@@ -6,3 +6,4 @@ export const sendFileAPI = () => baseURL + '/research';
 export const sendSaveDataAPI = () => baseURL + '/labels';
 export const getListAPI = () => baseURL + '/research?page_size=20';
 export const generatePatologyAPI = () => baseURL + '/ai/processing/';
+export const deleteAPI = () => baseURL + '/research/';

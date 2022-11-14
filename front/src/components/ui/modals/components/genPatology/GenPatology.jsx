@@ -24,12 +24,13 @@ export const GenPatology = ({
 
     let data = {
       "data": {
-        "id": 1,
+        "id": 16,
         "patology": "covid",
-        "segments": [segments.id],
-        "quantity": 1,
+        "segments": [3,4,5],
+        "quantity": 2,
         "size": 1,
-        "media_file": '0002.DCM'
+        "media_file": 'dicom (1).zip',
+        mode: 'gen'
       }
    }
 

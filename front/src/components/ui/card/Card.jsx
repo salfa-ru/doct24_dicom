@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchDeleteReasearch } from "../../../http/data";
 import { ReactComponent as Icon_trash } from "./assets/img/gg_trash.svg";
 import { ReactComponent as Icon_create } from "./assets/img/gridicons_create.svg";
 import Icon_cardImage from "./assets/img/Rectangle_35.png";
@@ -14,6 +15,10 @@ export const Card = ({
 
   const getResearchData = () => {
     return new Date(updated_at).toLocaleDateString();
+  }
+
+  const onDeleteResearch = () => {
+    fetchDeleteReasearch(item.id);
   }
 
   const onGenPatology = () => {
@@ -41,7 +46,9 @@ export const Card = ({
             <Icon_create 
               onClick={() => onGenPatology()}
             />
-            <Icon_trash />
+            <Icon_trash 
+              onClick={() => onDeleteResearch()}
+            />
           </div>
         </div>
 

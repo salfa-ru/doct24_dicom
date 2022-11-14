@@ -1,5 +1,5 @@
 import { $authHost, $host } from ".";
-import { getListAPI, sendSaveDataAPI } from "../utils/API";
+import { deleteAPI, getListAPI, sendSaveDataAPI } from "../utils/API";
 
 export const fetchSaveData = async (data) => {
   const res = await $authHost.post(sendSaveDataAPI(), data);
@@ -27,3 +27,9 @@ export const fetchPatientDicom = async (url) => {
   //const response = await fetch(url, {mode: 'no-cors'});
   //const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 };
+
+export const fetchDeleteReasearch = async (id) => {
+  const res = await $authHost.delete(deleteAPI() + id);
+
+  console.log('res', res);
+}
