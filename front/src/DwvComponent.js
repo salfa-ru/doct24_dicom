@@ -383,13 +383,16 @@ class DwvComponent extends React.Component {
 
   createData = () => {
     let data = {
-      metaPatology: this.state.metaPatology,
-      metaLocalization: this.state.metaLocalization,
-      metaKolvo: this.state.metaKolvo,
-      metaDolya: this.state.metaDolya,
-      metaSize: this.state.metaSize,
-      metaData: this.state.metaDataDraw,
-    };
+      research_id: 3,
+      labels: {
+        metaPatology: this.state.metaPatology,
+        metaLocalization: this.state.metaLocalization,
+        metaKolvo: this.state.metaKolvo,
+        metaDolya: this.state.metaDolya,
+        metaSize: this.state.metaSize,
+        metaData: this.state.metaDataDraw,
+      }
+    }
 
     return data;
   };

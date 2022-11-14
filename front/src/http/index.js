@@ -5,11 +5,12 @@ const $host = axios.create();
 const $authHost = axios.create();
 
 const authInterceptor = async (config) => {
-  const token = await localStorage.getItem('token')
+  const token = localStorage.getItem('token')
   
   config.headers = {
     'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'accept': 'application/json'
   }
 
   return config;
