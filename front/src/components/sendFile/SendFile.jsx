@@ -9,6 +9,8 @@ export const SendFile = ({ onSelectPatient, setModals }) => {
   const [fileList, setFileList] = useState(null);
   const [uploaded, setUploaded] = useState(false);
   const buttonRef = useRef();
+  const progressBarRef = useRef();
+  const [data, setData] = useState({});
 
   const handleChange = (event) => {
     console.log(event.target.files);
@@ -20,25 +22,50 @@ export const SendFile = ({ onSelectPatient, setModals }) => {
     buttonRef.current.click();
   };
 
+  const fillProgressBar = (event) => {
+    let progressLine = document.querySelector('.progress');
+    let current = event.loaded;
+    let total = event.total;
+  
+    let currentPercent = (current / total) * 100;
+    progressLine.style.width = `${currentPercent.toFixed(0)}%`
+  }
+
   const handleUpload = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("media_file", selectedFile);
+    const url = 'http://92.255.110.75:8000/api/v1/research/';
 
-    axios
-      .post("http://92.255.110.75:8000/api/v1/research/", formData, {
-        headers: {
-          "Content-type": "multipart/form-data",
-          accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "multipart/form-data",
+        accept: "application/json",
+      },
+      onUploadProgress: progressEvent => {
+        fillProgressBar(progressEvent)
+
+        if (progressEvent.loaded === progressEvent.total) {
+          console.log('100%');
+
+          setTimeout(() => {
+            console.log('норм', data);
+            //setUploaded(true);
+            //onSelectPatient(data);
+          }, 3000);
+        }
+      }
+    }
+  
+    axios.post(url, formData, config)
       .then((res) => {
         let { data } = res;
         data.file = selectedFile;
         data.fileList = fileList;
+        console.log('data222', data);
+        setData(data);
         setUploaded(true);
-
         onSelectPatient(data);
       })
       .catch((err) => {
@@ -49,11 +76,39 @@ export const SendFile = ({ onSelectPatient, setModals }) => {
         });
       });
 
+    //axios
+    //  .post("http://92.255.110.75:8000/api/v1/research/", formData, {
+    //    headers: {
+    //      "Content-type": "multipart/form-data",
+    //      accept: "application/json",
+    //      Authorization: `Bearer ${token}`,
+    //    },
+    //  })
+    //  .then((res) => {
+    //    let { data } = res;
+    //    data.file = selectedFile;
+    //    data.fileList = fileList;
+    //    setUploaded(true);
+
+    //    onSelectPatient(data);
+    //  })
+    //  .catch((err) => {
+    //    console.log(err);
+    //    setModals({
+    //      modal: "error",
+    //      message: err,
+    //    });
+    //  });
+
     //const result = await res.json();
   };
 
   return (
-    <div className="SendFile">
+    <div className={style.SendFile}>
+      <div 
+        className={[style.progressBar, 'progress'].join(' ')} 
+        ref={progressBarRef}
+      ></div>
       <input
         type="file"
         onChange={handleChange}

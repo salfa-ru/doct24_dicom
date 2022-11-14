@@ -9,7 +9,8 @@ export const Card = ({
   item, 
   onSelectPatient,
   setModals,
-  setPatientData
+  setPatientData,
+  filteredList
 }) => {
   const { patient_code, updated_at, id } = item;
 
@@ -19,6 +20,8 @@ export const Card = ({
 
   const onDeleteResearch = () => {
     fetchDeleteReasearch(item.id);
+
+    filteredList(item.id)
   }
 
   const onGenPatology = () => {

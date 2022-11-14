@@ -6,3 +6,19 @@
   left: -99999;
   top: -9999;
 }
+.SendFile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 160px;
+}
+
+.progressBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: red;
+  //width: 20px;
+  opacity: 0.6;
+}

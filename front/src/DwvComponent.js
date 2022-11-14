@@ -320,6 +320,8 @@ class DwvComponent extends React.Component {
     // possible load from location
     dwv.utils.loadFromUri(window.location.href, app);
 
+    console.log('this.state.patientData', this.state.patientData);
+
     if (this.state.patientData?.file) {
       this.onDrop2({
         patient: true,

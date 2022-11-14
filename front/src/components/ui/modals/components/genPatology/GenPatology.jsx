@@ -11,7 +11,8 @@ export const GenPatology = ({
   onError,
   messageSuccess
 }) => {
-  const [patology, setPatology] = useState({ id: 1, name: 'covid' });
+  
+  const [patology, setPatology] = useState({ id: patientData.id, name: 'covid' });
   const [localization, setLocalization] = useState({});
   const [segments, setSegments] = useState({});
   const [quantity, setQuantity] = useState({});
@@ -24,7 +25,7 @@ export const GenPatology = ({
 
     let data = {
       "data": {
-        "id": 16,
+        "id": patientData.id,
         "patology": "covid",
         "segments": [3,4,5],
         "quantity": 2,

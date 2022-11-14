@@ -18,6 +18,10 @@ export const ListBox = ({
     }
   }
 
+  const filteredList = (id) => {
+    setList([...list.filter(el => el.id !== id)]);
+  }
+
   useEffect(() => {
     getList();
   }, [])
@@ -35,6 +39,7 @@ export const ListBox = ({
               key={item.id}
               setModals={setModals}
               setPatientData={setPatientData}
+              filteredList={filteredList}
             />
           ))
         ) : ('нет данных')}
