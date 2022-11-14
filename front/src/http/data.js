@@ -2,7 +2,9 @@ import { $authHost, $host } from ".";
 import { getListAPI, sendSaveDataAPI } from "../utils/API";
 
 export const fetchSaveData = async (data) => {
-  const res = await $authHost.put(sendSaveDataAPI() + "/3", data);
+  const res = await $authHost.post(sendSaveDataAPI(), data);
+
+  console.log('res', res);
 };
 
 export const fetchList = async () => {

@@ -28,7 +28,8 @@ export const GenPatology = ({
         "patology": "covid",
         "segments": [segments.id],
         "quantity": 1,
-        "size": 1
+        "size": 1,
+        "media_file": '0002.DCM'
       }
    }
 
