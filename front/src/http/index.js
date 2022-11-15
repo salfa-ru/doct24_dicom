@@ -3,7 +3,7 @@ import axios from 'axios';
 const $host = axios.create();
 const $authHost = axios.create();
 
-const authInterceptor = async (config) => {
+const authInterceptor = (config) => {
   const token = localStorage.getItem('token')
   
   config.headers = {

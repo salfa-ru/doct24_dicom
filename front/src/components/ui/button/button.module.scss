@@ -26,3 +26,10 @@
     }
   }
 }
+
+.green {
+  background: green;
+  &:hover {
+    background: green;
+  }
+}

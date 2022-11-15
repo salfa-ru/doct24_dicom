@@ -9,13 +9,17 @@ export const Button = ({
   save,
   title = 'ButtonName',
   click,
-  empty
+  empty,
+  disabled,
+  green
 }) => {
   return <div 
             className={[
-              empty ? style.button__empty : style.button
+              empty ? style.button__empty : style.button,
+              green ? style.green : ''
             ].join(' ')}
             onClick={() => click()}
+            disabled={disabled}
         >
           {title} 
           {save && <Icon_save />}

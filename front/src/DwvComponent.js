@@ -12,7 +12,7 @@ import { Select } from "./components/ui/select/Select";
 import { DrawingKit } from "./components/drawingKit/DrawingKit";
 import { TopPanel } from "./components/topPanel/TopPanel";
 import { fetchFile } from "./http/sendFile";
-import { fetchPatientDicom, fetchSaveData } from "./http/data";
+import { fetchCurrentMetadata, fetchPatientDicom, fetchSaveData, fetchUpdateCurrentMetadata } from "./http/data";
 import { $authHost } from "./http";
 
 // Image decoders (for web workers)
@@ -121,6 +121,8 @@ class DwvComponent extends React.Component {
             onSave={this.toggleButtonSave}
             changeLayoutToList={changeLayoutToList}
             patientData={this.state.patientData}
+            getCurrentMetadata={this.getCurrentMetadata}
+            sendUpdateCurrentMetadata={this.sendUpdateCurrentMetadata}
           />
 
           {/*<div >
@@ -376,28 +378,62 @@ class DwvComponent extends React.Component {
     button.click();
   }
 
-  onSave = () => {
+  onSave = async () => {
     let data = this.createData();
-
-    console.log('data', data);
-    fetchSaveData(data);
+    //fetchSaveData(data);
+    fetchUpdateCurrentMetadata(this.state.patientData.id, data);
   };
 
   createData = () => {
     let data = {
-      research_id: 3,
+      research_id: this.state.patientData.id,
       labels: {
         metaPatology: this.state.metaPatology,
         metaLocalization: this.state.metaLocalization,
         metaKolvo: this.state.metaKolvo,
         metaDolya: this.state.metaDolya,
         metaSize: this.state.metaSize,
-        metaData: this.state.metaDataDraw,
+        metaDataDraw: this.state.metaDataDraw,
       }
     }
 
     return data;
   };
+
+  updateCurrentMetadata = (data) => {
+    const { labels } = data;
+    this.setState({
+      metaPatology: labels.metaPatology,
+      metaLocalization: labels.metaLocalization,
+      metaKolvo: labels.metaKolvo,
+      metaDolya: labels.metaDolya,
+      metaSize: labels.metaSize,
+      metaDataDraw: labels.metaDataDraw,
+    })
+
+    console.log('ok', this.state.metaDataDraw);
+  }
+
+  getCurrentMetadata = async () => {
+    let data = await fetchCurrentMetadata(this.state.patientData.id);
+
+    if (data) {
+      console.log('data', data);
+      this.updateCurrentMetadata(data);
+
+      return {status: 200}
+    }
+  }
+
+  sendUpdateCurrentMetadata = async () => {
+    let data = await fetchUpdateCurrentMetadata(this.state.patientData.id);
+
+    if (data) {
+      this.updateCurrentMetadata(data);
+
+      return {status: 200}
+    }
+  }
 
   /**
    * Handle a change tool event.
@@ -437,10 +473,15 @@ class DwvComponent extends React.Component {
     }
   };
 
-  fillThis = (x, y, sizeX, sizeY) => {
+  fillThis = (x, y, sizeX, sizeY, color = null) => {
     const canvas = this.getCanvas();
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = this.state.drawColor;
+    if (!color) {
+      ctx.fillStyle = this.state.drawColor;
+    } else {
+      ctx.fillStyle = color;
+    }
+    
     ctx.fillRect(x, y, sizeX, sizeY);
   };
 
@@ -776,7 +817,7 @@ class DwvComponent extends React.Component {
     canvasDrawElement.setAttribute("width", width);
     canvasDrawElement.setAttribute("height", heigth);
     canvasDrawElement.setAttribute("drawMode", false);
-    canvasDrawElement.style.border = "1px solid red";
+    //canvasDrawElement.style.border = "1px solid red";
 
     layerDiv.insertAdjacentElement("beforeend", div);
     div.insertAdjacentElement("afterbegin", canvasDrawElement);
@@ -797,10 +838,11 @@ class DwvComponent extends React.Component {
 
     if (!!data.length) {
       data.forEach((el) => {
-        let { x, y, size } = el;
+        let { x, y, size, color } = el;
         let sizeX = size.x;
         let sizeY = size.y;
-        this.fillThis(x, y, sizeX, sizeY);
+        console.log('el', el);
+        this.fillThis(x, y, sizeX, sizeY, color);
       });
     }
   }

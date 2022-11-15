@@ -15,10 +15,15 @@ export const Home = () => {
   }
 
   useEffect(() => {
-    fetchAuth({
-      "username": "user1",
-      "password": "123"
-    })
+    let token = localStorage.getItem('token');
+
+    //if (!token) {
+      fetchAuth({
+        "username": "user1",
+        "password": "123"
+      })
+    //}
+    
   }, []);
 
   const LayoutComponent = () => {
