@@ -137,3 +137,5 @@ uploads/
 media/
 
 drf/.idea/
+/ai/batches/
+/ai/Validation.ipynb

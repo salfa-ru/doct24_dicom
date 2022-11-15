@@ -1,5 +1,6 @@
 import os, json, re
 import lungmask
+from lungmask import mask
 import numpy as np
 import nibabel as nib
 import SimpleITK as sitk
@@ -112,6 +113,16 @@ class LungsDataLoader:
         for n in range(array.shape[0]):
             img = sitk.GetImageFromArray(array[n])
             sitk.WriteImage(img, f'{path}/{n + 1:04}.dcm')
+
+    @staticmethod
+    def dicom_to_zip(path):
+        files = list(os.walk(path))[0][2]
+        zip_name = path + '.zip'
+        with ZipFile(zip_name, 'w') as z:
+            for file in files:
+                file = path + '/' + file
+                z.write(file, arcname=file.split("/")[-1])
+        return zip_name
 
 
 if __name__ == "__main__":
