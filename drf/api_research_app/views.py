@@ -6,6 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 
+from api_label_app.models import Label
 from api_research_app.models import Research
 from api_research_app.serializers import ResearchModelSerializer
 from core.pagination import ProjectPagination
@@ -20,11 +21,9 @@ class ResearchViewSet(
     viewsets.GenericViewSet):
 
     """
-    Объект медицинского обследования.
+    Обновление файла авторизованного пользователя.
 
-    Использовать формат BASE64 для media_file.
-
-    *
+    *Обновление файла авторизованного пользователя.
     """
 
     class Meta:
@@ -38,10 +37,12 @@ class ResearchViewSet(
     filter_backends = [filters.SearchFilter]
     search_fields = ['patient_code', ]
 
-    def get_object(self):
-        return get_object_or_404(Research,
-                                pk=self.kwargs['pk'],
-                                owner=self.request.user)
+    # def get_object(self):
+    #     return get_object_or_404(Research,
+    #                             pk=self.kwargs['pk'],
+    #                             owner=self.request.user)
+
+
 
     # def create(self, request, *args, **kwargs):
     #
@@ -55,7 +56,55 @@ class ResearchViewSet(
     #     # return super(ResearchViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        return serializer.save(owner=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Получение списка файлов авторизованного пользователя
+
+        *Получение списка файлов авторизованного пользователя
+
+        """
+
+        return super(ResearchViewSet, self).list(request, args, kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Получение ссылки на файл по id авторизованного пользователя
+
+        *Получение ссылки на файл по id авторизованного пользователя
+
+        """
+
+        return super().retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Обновление файла по id авторизованного пользователя
+
+        *Обновление файла по id авторизованного пользователя
+
+        """
+        return super().update(request, args, kwargs)
+
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Удаление файла по id авторизованного пользователя
+
+        *Удаление файла по id авторизованного пользователя
+
+        """
+        return super().destroy(request, args, kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Загрузка файла по авторизованному пользователю
+
+        *Загрузка файла по авторизованному пользователю
+
+        """
+        return super().create(request, args, kwargs)
 
 
 

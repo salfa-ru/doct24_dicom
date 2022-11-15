@@ -25,7 +25,9 @@ class ProcessingViewSet(
 
     def create(self, request, *args, **kwargs):
         """
-        Создание разметки (С АВТОРИЗАЦИЕЙ)
+        Запуск процесса по нейросети c авторизацией
+
+        *Запуск процесса по нейросети по авторизацией
 
         """
         serializer = self.get_serializer(data=request.data)

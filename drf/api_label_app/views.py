@@ -20,9 +20,9 @@ class LabelViewSet(
         mixins.UpdateModelMixin,
         GenericViewSet):
     """
-    Объект меток медицинского обследования.
+    Частичное обновление разметки авторизованного пользователя.
 
-    *
+    *Частичное обновление разметки авторизованного пользователя.
     """
 
     class Meta:
@@ -41,14 +41,52 @@ class LabelViewSet(
         return Label.objects.none() if self.request.user.is_anonymous \
             else Label.objects.filter(owner=self.request.user)
 
-    def get_object(self):
-        return get_object_or_404(Research,
-                                 pk=self.kwargs['pk'],
-                                 owner=self.request.user)
+    # def get_object(self):
+    #     return get_object_or_404(Research,
+    #                              pk=self.kwargs['pk'],
+    #                              owner=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Получение список разметок авторизованного пользователя
+
+        *Получение список разметок авторизованного пользователя
+
+        """
+        return super(LabelViewSet, self).list(request, args, kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Получение разметки по id авторизованного пользователя
+
+        *Получение разметки по id авторизованного пользователя
+
+        """
+        return super(LabelViewSet, self).retrieve(request, args, kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Обновление разметки по id авторизованного пользователя
+
+        *Обновление разметки по id авторизованного пользователя
+
+        """
+        return super(LabelViewSet, self).update(request, args, kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Удаление разметки по id авторизованного пользователя
+
+        *Удаление разметки по id авторизованного пользователя
+
+        """
+        return super(LabelViewSet, self).destroy(request, args, kwargs)
 
     def create(self, request, *args, **kwargs):
         """
-        Создание разметки (С АВТОРИЗАЦИЕЙ)
+        Создание разметки по авторизованному пользователю
+
+        *Создание разметки по авторизованному пользователю
 
         """
         serializer = self.get_serializer(data=request.data)
@@ -61,6 +99,12 @@ class LabelViewSet(
                         )
 
     def perform_create(self, serializer):
+        """
+        Обновление разметки по id авторизованного пользователя
+
+        *Обновление разметки по id авторизованного пользователя
+
+        """
         research_id = serializer.initial_data['research_id']
         research = get_object_or_404(Research, pk=research_id)
         return serializer.save(owner=self.request.user, research=research)
