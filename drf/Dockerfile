@@ -13,16 +13,21 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install psycopg2 dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get update && apt-get -y install postgresql-server-dev-all gcc libpq-dev python3-dev musl-dev -y
 
 # lint
 RUN pip install --upgrade pip
+RUN python -m pip install --upgrade pip
 COPY . .
 
 # install dependencies
 COPY ./requirements.txt .
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels numpy
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels nvidia-cuda-nvrtc-cu11 nvidia_cudnn_cu11 nvidia-cudnn-cu11 nvidia-cublas-cu11 typing-extensions nvidia-cuda-runtime-cu11 setuptools wheel tensorflow scikit-learn
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels torch
+RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels pydicom
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
-
 
 #########
 # FINAL #

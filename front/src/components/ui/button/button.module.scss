@@ -7,4 +7,22 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  justify-content: center;
+  transition: all 0.4s;
+  &:hover {
+    background: #0066C5;
+  }
+  &__empty {
+    border: none;
+    background-color: none;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      color: #BDBDBD;
+    }
+  }
 }

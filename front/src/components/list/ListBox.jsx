@@ -3,18 +3,19 @@ import { fetchList } from '../../http/data'
 import { Card } from '../ui/card/Card'
 
 export const ListBox = ({
-  onSelectPatient
+  onSelectPatient,
+  setModals,
+  setPatientData
 }) => {
 
   const [list, setList] = useState([]);
 
   const getList = async () => {
-    console.log('getList');
     let res = await fetchList();
 
-    console.log('res', res);
-
-    setList(res.results);
+    if (res) {
+      setList(res.results);
+    }
   }
 
   useEffect(() => {
@@ -25,13 +26,15 @@ export const ListBox = ({
     <div className="listBox">
        <h1>Исследования</h1>
 
- <div className='flex gap20'>
+ <div className='flex gap20 wrap'>
         {!!list.length ? (
           list.map(item => (
             <Card 
               item={item} 
               onSelectPatient={onSelectPatient}
               key={item.id}
+              setModals={setModals}
+              setPatientData={setPatientData}
             />
           ))
         ) : ('нет данных')}

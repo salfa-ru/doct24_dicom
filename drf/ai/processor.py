@@ -1,14 +1,16 @@
 import os
 import pickle
 import numpy as np
-from data_io import LungsDataLoader
-from model_builder import covid_model
-from patologies import Piece
+from .data_io import LungsDataLoader
+from .model_builder import covid_model
+from .patologies import Piece
+
 
 
 class LungsAnalyzer(LungsDataLoader):
     def __init__(self, id, segmentation=True):
         super().__init__(id, segmentation)
+
 
     def get_mask(self, **kwargs):
         model = kwargs['model']
@@ -34,6 +36,7 @@ class LungsAnalyzer(LungsDataLoader):
                 index = 'dicom2nifit'
             nn_model = covid_model(input_folder, self.masks_folder)
             mask = nn_model.predict([index], return_output=True)[0]
+
             mask = mask.T[:, ::-1, :]
         if not os.path.exists(self.masks_folder):
             os.mkdir(self.masks_folder)
@@ -76,6 +79,7 @@ class LungsAnalyzer(LungsDataLoader):
         max_hight = False
         for i in range(self.segmentation.shape[0]):
             mask = np.isin(self.segmentation[i], segments)
+
             if np.count_nonzero(mask) > 10000:
                 if not min_hight:
                     min_hight = i

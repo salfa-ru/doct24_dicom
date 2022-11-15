@@ -1,3 +1,4 @@
+
 import os, shutil, requests, json
 from processor import LungsAnalyzer
 from patologies import Piece
