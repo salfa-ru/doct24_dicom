@@ -35,6 +35,7 @@ def api_commander(**kwargs):
             if not os.path.exists(data_folder):
                 os.mkdir(data_folder)
         basename = os.path.basename(_path)
+        logging.info(basename)
 
         if basename.split('.')[-1].lower() == 'dcm':
             new_path = os.path.join(data_folder, '0001.' +

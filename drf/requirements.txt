@@ -10,10 +10,8 @@ django-rest-swagger
 djangorestframework
 djangorestframework-simplejwt
 drf-yasg
-dynaconf
-gunicorn
 
-numpy
+
 lungmask
 nibabel
 miscnn
