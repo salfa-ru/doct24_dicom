@@ -11,5 +11,4 @@ djangorestframework
 djangorestframework-simplejwt
 drf-yasg
 dynaconf
-psycopg2
 gunicorn

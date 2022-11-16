@@ -23,11 +23,12 @@ COPY . .
 
 # install dependencies
 COPY ./requirements.txt .
-RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels numpy
-RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels nvidia-cuda-nvrtc-cu11 nvidia_cudnn_cu11 nvidia-cudnn-cu11 nvidia-cublas-cu11 typing-extensions nvidia-cuda-runtime-cu11 setuptools wheel tensorflow scikit-learn
-RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels torch
-RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels pydicom
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+RUN pip install numpy
+#RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels nvidia-cuda-nvrtc-cu11 nvidia_cudnn_cu11 nvidia-cudnn-cu11 nvidia-cublas-cu11 typing-extensions nvidia-cuda-runtime-cu11 setuptools wheel tensorflow scikit-learn
+#RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels torch
+#RUN pip wheel --no-deps --wheel-dir /usr/src/app/wheels "pydicom==2.2.0"
+#RUN pip install -r requirements.txt
+#RUN pip install -r ai/requirements.txt
 
 #########
 # FINAL #
@@ -54,9 +55,9 @@ WORKDIR $APP_HOME
 
 # install dependencies
 RUN apt-get update && apt-get install libpq-dev python3-dev -y
-COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements.txt .
-RUN pip install --no-cache /wheels/*
+#COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements_all.txt .
+RUN pip install -r requirements_all.txt
 
 # copy project
 COPY . $APP_HOME
