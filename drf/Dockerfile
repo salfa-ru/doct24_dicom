@@ -56,8 +56,8 @@ WORKDIR $APP_HOME
 # install dependencies
 RUN apt-get update && apt-get install libpq-dev python3-dev -y
 #COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements_all.txt .
-RUN pip install -r requirements_all.txt
+COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install -r requirements.txt
 
 # copy project
 COPY . $APP_HOME
