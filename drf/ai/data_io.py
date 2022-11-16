@@ -12,11 +12,11 @@ from dicom2nifti import dicom_series_to_nifti
 
 class LungsDataLoader:
     def __init__(self, id, segmentation=True):
-        self.data_folder = './data/'
+        self.data_folder = './ai/data/'
         self.id = id
-        self.path = self.data_folder + self.id + '/'
-        self.masks_folder = self.data_folder + self.id + '/masks/'
-        if not os.path.exists(self.path):
+        self._path = f'{self.data_folder}{self.id}/'
+        self.masks_folder = f'{self.data_folder}{self.id}/masks/'
+        if not os.path.exists(self._path):
             raise FileExistsError
         self.interface = self.get_interface()
         if not self.interface:
@@ -25,24 +25,24 @@ class LungsDataLoader:
         self.segmentation = self.load_segmentation() if segmentation else None
 
     def get_interface(self):
-        if os.path.exists(self.path + 'dicom/'):
-            for root, _, files in os.walk(self.path + 'dicom/'):
+        if os.path.exists(self._path + 'dicom/'):
+            for root, _, files in os.walk(self._path + 'dicom/'):
                 for f in files:
-                    if re.match('.*001.dcm', f):
+                    if re.match('.*001.dcm', f.lower()):
                         interface = DICOM_interface()
-                        interface.initialize(self.path)
+                        interface.initialize(self._path)
                         self.image_index = 'dicom/'
                         return interface
-        if os.path.exists(self.path + 'dicom.zip'):
-            z = ZipFile(self.path + 'dicom.zip')
-            z.extractall(self.path + 'dicom/')
+        if os.path.exists(self._path + 'dicom.zip'):
+            z = ZipFile(self._path + 'dicom.zip')
+            z.extractall(self._path + 'dicom/')
             interface = DICOM_interface()
-            interface.initialize(self.path)
+            interface.initialize(self._path)
             self.image_index = 'dicom/'
             return interface
-        if os.path.exists(self.path + 'imaging.nii.gz'):
+        if os.path.exists(self._path + 'imaging.nii.gz'):
             interface = NIFTI_interface()
-            interface.initialize(self.path)
+            interface.initialize(self._path)
             self.image_index = ''
             return interface
 
@@ -54,7 +54,7 @@ class LungsDataLoader:
         return images_arr, images_meta
 
     def load_segmentation(self):
-        path = self.path + 'segmentation.nii.gz'
+        path = self._path + 'segmentation.nii.gz'
         if not os.path.exists(path):
             segmentation = self.perform_segmentation()
             self.save_mask(segmentation, path)
@@ -97,12 +97,12 @@ class LungsDataLoader:
             return json.load(f)
 
     def dicom_to_nifit(self):
-        dicom_directory = self.path + 'dicom/'
-        if not os.path.exists(self.path + 'dicom2nifit/'):
-            os.mkdir(self.path + 'dicom2nifit/')
-        elif os.path.exists(self.path + 'dicom2nifit/imaging.nii.gz'):
+        dicom_directory = self._path + 'dicom/'
+        if not os.path.exists(self._path + 'dicom2nifit/'):
+            os.mkdir(self._path + 'dicom2nifit/')
+        elif os.path.exists(self._path + 'dicom2nifit/imaging.nii.gz'):
             return
-        output_file = self.path + 'dicom2nifit/imaging.nii.gz'
+        output_file = self._path + 'dicom2nifit/imaging.nii.gz'
         dicom_series_to_nifti(dicom_directory, output_file, reorient_nifti=True)
 
     @staticmethod

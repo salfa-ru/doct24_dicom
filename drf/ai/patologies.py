@@ -23,7 +23,7 @@ class Piece():
     def scaling(self, ratio=5):
         new_data = np.zeros(shape=(ratio * self.shape[0] + 1, self.shape[1], self.shape[2]))
         new_mask = np.zeros(shape=(ratio * self.shape[0] + 1, self.shape[1], self.shape[2]))
-        new_coef = np.zeros(shape=(ratio * self.shape[0] + 1, self.shape[1], self.shape[2]))
+        new_coef = np.zeros(shape=(ratio * self.shape[0] + 1, self.shape[1], self.shape[2]), dtype=np.float16)
         for n in np.arange(self.shape[0] - 1):
             new_data[n * ratio] = self.data[n]
             new_mask[n * ratio] = self.mask[n]

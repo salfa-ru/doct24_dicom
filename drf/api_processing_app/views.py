@@ -18,7 +18,7 @@ class ProcessingViewSet(
 
     """
 
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     pagination_class = None
     serializer_class = ProcessingSerializer

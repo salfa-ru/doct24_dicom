@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from .data_io import LungsDataLoader
 from .model_builder import covid_model
-from .patologies import Piece
+from ai.patologies import Piece
 
 
 
@@ -56,7 +56,7 @@ class LungsAnalyzer(LungsDataLoader):
         print('Загрузка паталогии.')
         global piece_name
         piece_name = self.get_piece_name(**kwargs)
-        path = f'./pieces/{piece_name}.pkl'
+        path = f'./ai/pieces/{piece_name}.pkl'
         with open(path, 'rb') as f:
             piece = pickle.load(f)
         return piece
@@ -135,7 +135,7 @@ class LungsAnalyzer(LungsDataLoader):
         return base_point, start_level, piece
 
     def get_generation(self, **kwargs):
-        path = self.path + 'generation/'
+        path = self._path + 'generation/'
         if not os.path.exists(path):
             os.mkdir(path)
         gen_keys = ['patology', 'segments', 'quantity', 'size']
@@ -166,7 +166,7 @@ class LungsAnalyzer(LungsDataLoader):
             print(f'\rГенерация изображений: {n - start_level + 1} из {piece.shape[0]}', end='')
             images[n] = self.insert_piece_on_slide(self.images[n], piece[n - start_level], seg[n], point)
         print('\nСохранение.')
-        path = self.path + 'generation/'
+        path = self._path + 'generation/'
         if not os.path.exists(path):
             os.mkdir(path)
         path = path + gen_name

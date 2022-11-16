@@ -1,34 +1,51 @@
-import os, shutil, requests, json
+import logging
+
+import os
+import shutil
+import requests
+import json
 from .processor import LungsAnalyzer
 from .patologies import Piece
 
-
+host = 'localhost:8000'
 username = 'admin'
 password = 'admin'
-token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4NTQyNDA3LCJpYXQiOjE2Njg0NTYwMDcsImp0aSI6ImVmZjJmMmE4YjNkODQ5MjZiYjMwNjY4MWVhYjAxMjIwIiwidXNlcl9pZCI6ImFiZjc3YWUwLTE0NGMtNDYwNy05MGFlLWJlZTU1MGM5ZGRmNiJ9.Kxcupf8ffrFYYNeZP9SX4aEqifOwkozf0ZreuEfqiwk'
+token = None
+
 
 def api_commander(**kwargs):
 
-    print('НАЧАЛО-',kwargs)
-    #token= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4NTI4Mzg5LCJpYXQiOjE2Njg0NDE5ODksImp0aSI6IjQ3ZDViZjVhNGU5MTRiYjliODY1ZDgwYWZkMzc3ODVjIiwidXNlcl9pZCI6IjIwOGQyMTk5LTNkYmMtNDVhMy1iOTY3LWY2OWZlY2Y1ZjkwMiJ9.B2hMgFHTQc7VI7jGGl2dyUVEd4hz-mLkN4AEjlSLL0Q'
+    logging.basicConfig(format='%(asctime)s %(message)s',
+                        datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+    logging.info(f'{"*"*10}Начало{"*"*10}')
+    logging.info(f'параметры{kwargs}')
 
-    #try:
-    print(kwargs)
-    print('текущий каталог:',os.getcwd())
     try:
         analyzer = LungsAnalyzer(kwargs['id'], segmentation=True)
-    except:
-        print(os.listdir())
-        print('Создание каталога')
-        data_folder = f"/home/app/web/ai/data/{kwargs['id']}/"
+    except Exception as err:
+        logging.warning(f'ошибка:{err}')
+        data_folder = f"./ai/data/{kwargs['id']}/"
         if not os.path.exists(data_folder):
+            logging.info(f'Создание каталога: {data_folder}')
             os.mkdir(data_folder)
-        path = get_media_path(kwargs['id'])
-        print(path)
-        if not path.split(".")[-1] == 'zip':
+        _path = get_media_path(kwargs['id'])
+        logging.info(f'Локальный путь{_path}')
+        if not _path.split(".")[-1] == 'zip':
             data_folder = data_folder + 'dicom/'
-            os.mkdir(data_folder)
-        shutil.copy(path, data_folder)
+            if not os.path.exists(data_folder):
+                os.mkdir(data_folder)
+        basename = os.path.basename(_path)
+
+        if basename.split('.')[-1].lower() == 'dcm':
+            new_path = os.path.join(data_folder, '0001.' +
+                                    basename.split('.')[1])
+        elif basename.split('.')[-1].lower() == 'zip':
+            new_path = os.path.join(data_folder, 'dicom.zip')
+        else:
+            new_path = data_folder
+
+        shutil.copy2(_path, new_path)
+
         analyzer = LungsAnalyzer(kwargs['id'], segmentation=True)
     if kwargs.get('mode') == 'mask':
         mask = analyzer.get_mask(**kwargs)
@@ -36,30 +53,43 @@ def api_commander(**kwargs):
         return True, mask
     elif kwargs.get('mode') == 'gen':
         print('ЗАХОД GEN')
-        path = analyzer.get_generation(**kwargs)
+        _path = analyzer.get_generation(**kwargs)
         print('ПОЛУЧЕНИЕ ПУТИ')
-        filename = "_".join([kwargs['id'], kwargs['mode'], kwargs['patology']])
-        send_gen_to_base(filename, path)
-        return True, path
-    #except Exception as err:
+        filename = "_".join(
+            [str(kwargs['id']), kwargs['mode'], kwargs['patology']]) + '.zip'
+        send_gen_to_base(filename, _path)
+        return True, _path
+    # except Exception as err:
     #    return False, {'error': str(err)}
 
 
 def send_gen_to_base(filename, path):
-    url = "http://92.255.110.75:8000/api/v1/research/"
+
+    token = update_token()
+    url = f'http://{host}/api/v1/research/'
     payload = {'patient_code': 'AUTO'}
     files = [
-        ('media_file', (filename, open(path, 'rb'), 'application/octet-stream'))]
+        ('media_file',
+         (filename,
+          open(
+              path,
+              'rb'),
+             'application/octet-stream'))]
     headers = {
         'accept': 'application/json',
         'Authorization': f'Bearer {token}'
     }
-    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+    response = requests.request(
+        "POST",
+        url,
+        headers=headers,
+        data=payload,
+        files=files)
     print(response.text)
 
 
 def update_token():
-    '''
+    """
     curl -X 'POST' \
       'http://92.255.110.75:8000/api/v1/authentification/token/' \
       -H 'accept: application/json' \
@@ -68,24 +98,34 @@ def update_token():
       "username": "admin",
       "password": "admin"
     }'
-    '''
-    
-    print('получаем токен')
-    url = "http://92.255.110.75:8000/api/v1/authentification/token/"
-    payload = json.dumps({"username": username, "password": password})
+    """
+
+    logging.info('получаем токен')
+    url = f'http://{host}/api/v1/authentification/token/'
+    payload = json.dumps(
+        {"username": username,
+         "password": password}
+    )
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
     }
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print(response)
-    tt = json.loads(response.text)
+
+    try:
+        res = requests.request("POST", url, headers=headers, data=payload)
+    except Exception as err:
+        logging.info(str(err))
+        return
+    tt = json.loads(res.text)
+    logging.info(tt['access'])
     return tt['access']
 
 
 def send_mask_to_base(id, mask):
+
+    token = update_token()
     print('передаём файл')
-    url = "http://92.255.110.75:8000/api/v1/labels/"
+    url = f"http://{host}/api/v1/labels/"
     payload = json.dumps({"research_id": id, "labels": mask})
     headers = {
         'accept': 'application/json',
@@ -95,36 +135,43 @@ def send_mask_to_base(id, mask):
     response = requests.request("POST", url, headers=headers, data=payload)
     print(response.text)
 
+
 def get_media_path(id):
-    '''
+    """
       curl -X 'GET' \
            'http://92.255.110.75:8000/api/v1/research/16/' \
            -H 'accept: application/json' \
            -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4NTMzMTIzLCJpYXQiOjE2Njg0NDY3MjMsImp0aSI6ImRlODYyOGZkNWFkZjQ5NTViMjExYThmNTdlZDZhZDU4IiwidXNlcl9pZCI6IjIwOGQyMTk5LTNkYmMtNDVhMy1iOTY3LWY2OWZlY2Y1ZjkwMiJ9.QchwNXC6lPZV1vG2l0V0QmZfdIRyCRWJEs2Gx1QqPfw'
-    '''
-    print('получаем файл')
-    url = f"http://92.255.110.75:8000/api/v1/research/{id}/"
-    print(url)
+    """
+    token = update_token()
+    logging.info('получаем файл')
+    url = f"http://{host}/api/v1/research/{id}/"
     headers = {
-        'Authorization': f'Bearer {token}'
+        'Authorization': f'Bearer {token}',
+        'accept': 'application/json'
     }
-    print(headers)
     response = None
     try:
-        response = requests.request("GET", url, headers=headers)
-    except BaseException as err:
-        print(err)
-    print('после трай', response)
-    response = response.json()
-    print(response)
-    path = response["media_file"]
-    path = "/media" + path.split('media')[-1]
+        res = requests.request("GET", url, headers=headers)
+    except Exception as err:
+        logging.fatal(str(err))
+        return None
+
+    tt = json.loads(res.text)
+    path = tt["media_file"]
+    path = "./media" + path.split('media')[-1]
+    logging.info(path)
     return path
 
 
 if __name__ == "__main__":
-    gen_request = {"id": "0009", "mode": "gen", "patology": "covid", "segments": [5], "quantity": 1,
-                   'size': 1}
+    gen_request = {
+        "id": "0009",
+        "mode": "gen",
+        "patology": "covid",
+        "segments": [5],
+        "quantity": 1,
+        'size': 1}
     mask_request = {"id": "0008", "mode": "mask", "model": "covid"}
 
     request = {"id": "1"}
