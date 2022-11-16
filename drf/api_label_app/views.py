@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
-from rest_framework import mixins, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -34,8 +35,8 @@ class LabelViewSet(
     pagination_class = ProjectPagination
     queryset = Label.objects.all()
 
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['research_id']
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['research__id']
 
     def get_queryset(self):
         return Label.objects.none() if self.request.user.is_anonymous \

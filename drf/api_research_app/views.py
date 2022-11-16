@@ -1,12 +1,7 @@
-from http import HTTPStatus
-
-from rest_framework.response import Response
 from rest_framework import mixins, viewsets, filters
-from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 
-from api_label_app.models import Label
 from api_research_app.models import Research
 from api_research_app.serializers import ResearchModelSerializer
 from core.pagination import ProjectPagination
@@ -19,7 +14,6 @@ class ResearchViewSet(
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet):
-
     """
     Обновление файла авторизованного пользователя.
 
@@ -41,8 +35,6 @@ class ResearchViewSet(
     #     return get_object_or_404(Research,
     #                             pk=self.kwargs['pk'],
     #                             owner=self.request.user)
-
-
 
     # def create(self, request, *args, **kwargs):
     #
@@ -87,7 +79,6 @@ class ResearchViewSet(
         """
         return super().update(request, args, kwargs)
 
-
     def destroy(self, request, *args, **kwargs):
         """
         Удаление файла по id авторизованного пользователя
@@ -105,6 +96,3 @@ class ResearchViewSet(
 
         """
         return super().create(request, args, kwargs)
-
-
-
