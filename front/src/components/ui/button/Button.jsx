@@ -11,12 +11,14 @@ export const Button = ({
   click,
   empty,
   disabled,
-  green
+  green,
+  trash
 }) => {
   return <div 
             className={[
               empty ? style.button__empty : style.button,
-              green ? style.green : ''
+              green ? style.green : '',
+              trash ? style.trash : '',
             ].join(' ')}
             onClick={() => click()}
             disabled={disabled}

@@ -51,6 +51,7 @@ export const Card = ({
             />
             <Icon_trash 
               onClick={() => onDeleteResearch()}
+              className={style.trash}
             />
           </div>
         </div>

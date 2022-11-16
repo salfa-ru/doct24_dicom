@@ -704,26 +704,26 @@ class DwvComponent extends React.Component {
       //setTimeout(() => {
       //  this.state.dwvApp.loadFiles(event.fileList);
       //}, 3000)
-      let data = {
-        isTrusted: true,
-        altKey: false,
-        bubbles: true,
-        button: 0,
-        buttons: 0,
-        cancelBubble: false,
-        cancelable: true,
-        clientX: 784,
-        clientY: 497,
-        composed: true,
-        ctrlKey: false,
-        currentTarget: null,
-        dataTransfer: {
-          files: event.fileList
-        }
-      };
+      //let data = {
+      //  isTrusted: true,
+      //  altKey: false,
+      //  bubbles: true,
+      //  button: 0,
+      //  buttons: 0,
+      //  cancelBubble: false,
+      //  cancelable: true,
+      //  clientX: 784,
+      //  clientY: 497,
+      //  composed: true,
+      //  ctrlKey: false,
+      //  currentTarget: null,
+      //  dataTransfer: {
+      //    files: event.fileList
+      //  }
+      //};
 
       console.log('event.fileList', event.fileList);
-      this.defaultHandleDragEvent(data);
+      //this.defaultHandleDragEvent(data);
       this.state.dwvApp.loadFiles(event.fileList);
     } else {
       if (event?.media_file) {

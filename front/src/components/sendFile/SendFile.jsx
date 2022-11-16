@@ -49,11 +49,10 @@ export const SendFile = ({ onSelectPatient, setModals }) => {
         if (progressEvent.loaded === progressEvent.total) {
           console.log('100%');
 
-          setTimeout(() => {
-            console.log('норм', data);
-            //setUploaded(true);
-            //onSelectPatient(data);
-          }, 3000);
+          //setTimeout(() => {
+          //  console.log('норм', data);
+          //  console.log('progressEvent', progressEvent);
+          //}, 3000);
         }
       }
     }

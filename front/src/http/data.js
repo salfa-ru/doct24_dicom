@@ -57,6 +57,7 @@ export const fetchUpdateCurrentMetadata = async (id, data) => {
     }
   } catch (error) {
     console.log('error', error);
+    fetchSaveData(data);
   }
 
 }

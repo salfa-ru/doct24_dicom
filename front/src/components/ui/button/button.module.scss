@@ -33,3 +33,9 @@
     background: green;
   }
 }
+
+.trash {
+  &:hover {
+    color: red;
+  }
+}
