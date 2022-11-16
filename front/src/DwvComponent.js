@@ -322,7 +322,7 @@ class DwvComponent extends React.Component {
     // possible load from location
     dwv.utils.loadFromUri(window.location.href, app);
 
-    console.log('this.state.patientData', this.state.patientData);
+    // console.log('this.state.patientData', this.state.patientData);
 
     if (this.state.patientData?.file) {
       this.onDrop2({
@@ -340,10 +340,10 @@ class DwvComponent extends React.Component {
   }
 
   onChangeDrawColor = (color) => {
-    console.log('меняю цвет');
+    // console.log('меняю цвет');
     this.setState({ drawColor: color })
 
-    console.log('drawColor', this.state.drawColor);
+    // console.log('drawColor', this.state.drawColor);
     this.handleModeDrawing("pencil");
   }
 
@@ -370,7 +370,7 @@ class DwvComponent extends React.Component {
   }
 
   onChangeColorFill() {
-    console.log("colorfill");
+    // console.log("colorfill");
   }
 
   toggleButtonSave() {
@@ -411,14 +411,14 @@ class DwvComponent extends React.Component {
       metaDataDraw: labels.metaDataDraw,
     })
 
-    console.log('ok', this.state.metaDataDraw);
+    // console.log('ok', this.state.metaDataDraw);
   }
 
   getCurrentMetadata = async () => {
     let data = await fetchCurrentMetadata(this.state.patientData.id);
 
     if (data) {
-      console.log('data', data);
+      //// console.log('data', data);
       this.updateCurrentMetadata(data);
 
       return {status: 200}
@@ -656,7 +656,7 @@ class DwvComponent extends React.Component {
       mode: "no-cors",
     });
     const token = await localStorage.getItem('token')
-    console.log('заливаю файл на сервер');
+    //// console.log('заливаю файл на сервер');
 
     const data2 = await $authHost.request({
       method: "get",
@@ -669,7 +669,7 @@ class DwvComponent extends React.Component {
       },
       url: "http://92.255.110.75:8000/media/0002.DCM",
       onUploadProgress: (res) => {
-        console.log("res", res);
+        // console.log("res", res);
       },
     });
 
@@ -695,7 +695,7 @@ class DwvComponent extends React.Component {
   };
 
   onDrop2 = async (event) => {
-    console.log('event', event);
+    // console.log('event', event);
     if (event.patient) {
       //let formData = new File();
       //formData.append('file', event.fileList)
@@ -722,7 +722,7 @@ class DwvComponent extends React.Component {
       //  }
       //};
 
-      console.log('event.fileList', event.fileList);
+      // console.log('event.fileList', event.fileList);
       //this.defaultHandleDragEvent(data);
       this.state.dwvApp.loadFiles(event.fileList);
     } else {
@@ -734,17 +734,17 @@ class DwvComponent extends React.Component {
   };
 
   onDrop = async (event) => {
-    console.log("onDrop");
+    // console.log("onDrop");
     //this.downloadDicom();
-    //console.log('event.dataTransfer.files', event.dataTransfer.files);
+    //// console.log('event.dataTransfer.files', event.dataTransfer.files);
 
     // load files
     let input = document.querySelector('input[type="file"]');
 
     if (event?.patient && !this.state.incomingFileFromBack) {
-      console.log("onDrop1");
+      // console.log("onDrop1");
       let { file } = event.patient;
-      //console.log('пациент есть incomingFileFromBack нет');
+      //// console.log('пациент есть incomingFileFromBack нет');
       //let formData = new FormData();
       //formData.append('file', event.file)
 
@@ -754,23 +754,23 @@ class DwvComponent extends React.Component {
       //dT.items.add(new File([blob], '0002 (1).DCM'))
       //input.files = dT.files
 
-      //console.log('input', dT.files);
+      //// console.log('input', dT.files);
 
       this.setState({ incomingFileFromBack: true });
       this.startCreateDicom(file);
     }
     if (!event?.patient && !this.state.incomingFileFromBack) {
-      console.log("onDrop2", event);
+      // console.log("onDrop2", event);
       this.defaultHandleDragEvent(event);
       this.state.dwvApp.loadFiles(event.dataTransfer.files);
 
-      //console.log('loadFIle', event.dataTransfer.files);
+      //// console.log('loadFIle', event.dataTransfer.files);
       //let file = await this.createFormData(event.dataTransfer.files);
     }
 
     if (this.state.incomingFileFromBack) {
-      console.log("onDrop3");
-      //console.log('incomingFileFromBack');
+      // console.log("onDrop3");
+      //// console.log('incomingFileFromBack');
       this.state.dwvApp.loadFiles(input.dataTransfer.files);
     }
   };
@@ -841,7 +841,7 @@ class DwvComponent extends React.Component {
         let { x, y, size, color } = el;
         let sizeX = size.x;
         let sizeY = size.y;
-        console.log('el', el);
+        // console.log('el', el);
         this.fillThis(x, y, sizeX, sizeY, color);
       });
     }

@@ -37,10 +37,11 @@ export const fetchDeleteReasearch = async (id) => {
 
 export const fetchCurrentMetadata = async (id) => {
   try {
-    const res = await $authHost.get(getCurrentMetadataAPI() + id + '/')
+    const res = await $authHost.get(getCurrentMetadataAPI() + id)
 
     if (res.status === 200) {
-      return res.data
+      let length = res.data.results.length
+      return res.data.results[length - 1]
     }
   } catch (error) {
     console.log('error', error);
