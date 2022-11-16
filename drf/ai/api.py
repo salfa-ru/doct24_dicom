@@ -159,7 +159,9 @@ def get_media_path(id):
 
     tt = json.loads(res.text)
     path = tt["media_file"]
+    logging.info(path)
     path = "./media" + path.split('media')[-1]
+    logging.info(path)
     # if not os.path.exists(path):
     path = os.path.join('/home/app/web/media', path.split("media")[-1])
     logging.info(path)
