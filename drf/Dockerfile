@@ -11,6 +11,7 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV DEBIAN_FRONTEND noninteractive
 
 # install psycopg2 dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
@@ -41,7 +42,7 @@ FROM python:3.9.13-bullseye
 RUN mkdir -p /home/app
 
 # create the app user
-RUN addgroup --system app && adduser --system --group app
+#RUN addgroup --system app && adduser --system --group app
 
 # create the appropriate directories
 ENV HOME=/home/app
@@ -58,7 +59,7 @@ RUN apt-get update && apt-get install libpq-dev python3-dev -y
 #COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
 RUN python -m pip install --upgrade pip
-RUN pip install gunicorn dynaconf numpy
+RUN pip install gunicorn dynaconf numpy torch
 RUN pip install -r requirements.txt --upgrade
 
 # copy project
@@ -67,7 +68,7 @@ COPY . $APP_HOME
 RUN sed -i 's/staticfiles/static/g' /usr/local/lib/python3.9/site-packages/rest_framework_swagger/templates/rest_framework_swagger/index.html
 
 # chown all the files to the app user
-RUN chown -R app:app $APP_HOME
+RUN chown -R root:root $APP_HOME
 
 # change to the app user
-USER app
+USER root

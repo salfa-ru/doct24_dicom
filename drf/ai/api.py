@@ -161,9 +161,13 @@ def get_media_path(id):
     tt = json.loads(res.text)
     _path = tt["media_file"]
     logging.info(_path)
-    # if not os.path.exists(path):
-    _path = os.path.join('/home/app/web/media', _path.split('/')[-1])
+    basename = os.path.basename(_path)
+    _path_1 = os.path.join('/home/app/web/media', basename) #for docker
+    _path_2 = os.path.join('./media', basename) #for local
+    _path = _path_1 if os.path.exists(_path_1) else _path_2
     logging.info(_path)
+    if not os.path.exists(_path):
+        raise OSError
     return _path
 
 
